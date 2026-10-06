@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pyhvsr-suite — Manual de usuario</title>
+<meta name="description" content="Manual de usuario de pyhvsr-suite: procesamiento H/V (Nakamura), criterios SESAME, clasificación E.030 y reportes.">
+<link rel="icon" href="img/logo.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <button id="menu-toggle" class="menu-toggle" type="button" aria-label="Índice">☰ Índice</button>
+  <a class="brand" href="#intro"><img src="img/logo.png" alt=""><strong>pyhvsr-suite</strong><span>Manual de usuario</span></a>
+  <span class="spacer"></span>
+  <a class="btn" href="manual_en.html" data-lang-switch="en" lang="en">English</a>
+  <button id="theme-toggle" type="button">Claro / Oscuro</button>
+</header>
+<div class="layout">
+<aside class="toc">
+<input id="toc-search" type="search" placeholder="Buscar en el manual…" aria-label="Buscar en el manual…">
+<nav aria-label="toc">
+<div class="group">Primeros pasos</div><ul>
+<li><a href="#intro">Qué es pyhvsr-suite</a></li>
+<li><a href="#quickstart">Inicio rápido</a></li>
+<li><a href="#concepts">Conceptos clave</a></li>
+</ul>
+<div class="group">Páginas del programa</div><ul>
+<li><a href="#p1">1. Proyecto / Catálogo</a></li>
+<li><a href="#p2">2. Señal / Ventanas</a></li>
+<li><a href="#p3">3. Parámetros</a></li>
+<li><a href="#p4">4. Resultados H/V</a></li>
+<li><a href="#p5">5. Evolución temporal del HVSR</a></li>
+<li><a href="#p6">6. Espectros por componente</a></li>
+<li><a href="#p7">7. Análisis azimutal</a></li>
+<li><a href="#p8">8. Análisis espacial / Mapas</a></li>
+<li><a href="#p9">9. Basamento / Vs (opcional)</a></li>
+<li><a href="#p10">10. Espectrogramas (diagnóstico)</a></li>
+</ul>
+<div class="group">Referencia</div><ul>
+<li><a href="#files">Proyectos, formatos y exportaciones</a></li>
+<li><a href="#productivity">Copiar, menús y atajos</a></li>
+<li><a href="#sesame">Criterios SESAME</a></li>
+<li><a href="#e030">Clasificación E.030 y memoria</a></li>
+<li><a href="#license">Licencia y activación</a></li>
+</ul>
+<div class="group">Más información</div><ul>
+<li><a href="#limits">Limitaciones y buenas prácticas</a></li>
+<li><a href="#faq">Preguntas frecuentes</a></li>
+<li><a href="#about">Licencia, créditos y versión</a></li>
+</ul>
+</nav>
+</aside>
+<main>
+<section id="intro">
+<div class="hero">
+  <p class="meta">Manual de usuario · versión 0.1.0</p>
+  <h1>pyhvsr-suite</h1>
+  <p class="lead">Procesamiento de razones espectrales H/V (método de Nakamura) para caracterización sísmica de sitio, con criterios SESAME, clasificación según la norma E.030 y reportes listos para entregar.</p>
+  <div class="facts">
+    <div class="fact"><b>f0 · T0 · A0</b><span>frecuencia, período y amplitud del pico</span></div>
+    <div class="fact"><b>SESAME 2004</b><span>9 criterios de fiabilidad y claridad</span></div>
+    <div class="fact"><b>E.030</b><span>clasificación de sitio y memoria en Word</span></div>
+    <div class="fact"><b>Sin internet</b><span>todo se calcula en tu equipo</span></div>
+  </div>
+</div>
+
+<p>pyhvsr-suite lee registros de vibración ambiental de tres componentes (vertical Z y horizontales N y E), calcula la curva H/V de cada ventana de tiempo, las promedia y detecta el pico principal. Con ese pico entrega la frecuencia predominante del sitio (f0), su período (T0 = 1/f0) y su amplitud (A0), evalúa la calidad de la medición con los criterios SESAME (2004) y, si ingresas el Vs30 y la zona sísmica, clasifica el sitio según la norma peruana E.030.</p>
+
+<h3>Qué incluye</h3>
+<ul>
+  <li>Lectura de SEG-2, SAF (SESAME/Tromino) y MiniSEED, con mapeo de canales verificable.</li>
+  <li>Selección de ventanas con rechazo manual y automático (muestras malas, STA/LTA, outliers).</li>
+  <li>H/V con suavizado Konno-Ohmachi o Parzen y varios métodos de combinación horizontal.</li>
+  <li>Diagnósticos: evolución temporal, espectros por componente, espectrogramas y análisis azimutal.</li>
+  <li>Mapas multi-sitio (f0, T0, amplitud) con recorte a un polígono de estudio.</li>
+  <li>Estimación orientativa de profundidad de basamento y perfil de Vs.</li>
+  <li>Exportación a formato Geopsy (.hv), Excel y CSV; comparación con una curva de Geopsy.</li>
+  <li>Informes PDF (clásico, detallado y consolidado) y memoria de cálculo E.030 en Word.</li>
+</ul>
+
+<div class="callout warn"><span class="label">Cuidado</span><p>Los resultados son un apoyo técnico y dependen de los datos y de los parámetros elegidos. No sustituyen el criterio de un profesional calificado. Lee la sección «Limitaciones» antes de usarlos en decisiones de ingeniería.</p></div>
+</section>
+<section id="quickstart"><h2>Inicio rápido</h2>
+<p>De un archivo de campo a un informe, en ocho pasos:</p>
+<ol class="steps">
+  <li><b>Agrega el registro.</b>
+      En «1. Proyecto / Catálogo» pulsa <i>Agregar archivo(s)…</i> (o arrastra el archivo). Para SEG-2 abre <i>Configurar mapeo de canales…</i>, indica cuál canal es Z, N y E y marca «He verificado que este orden es correcto».</li>
+  <li><b>Revisa la señal y las ventanas.</b>
+      En «2. Señal / Ventanas» pulsa <i>Generar ventanas</i>. Las verdes se usan; las rojas se descartan. Puedes aplicar el rechazo automático o hacer clic en una ventana para aceptarla o rechazarla.</li>
+  <li><b>Elige los parámetros.</b>
+      En «3. Parámetros» los valores por defecto sirven para empezar. Lo más influyente es el largo de ventana, el suavizado y el rechazo de ventanas.</li>
+  <li><b>Procesa.</b>
+      En «4. Resultados H/V» pulsa <i>Procesar sitio activo</i>. Verás la curva, los picos y el veredicto SESAME.</li>
+  <li><b>Valida el pico.</b>
+      Si el pico automático no es el que te interesa, acota la banda o haz clic sobre la curva. Consulta «6. Espectros por componente» para saber de dónde viene.</li>
+  <li><b>Añade la clasificación E.030.</b>
+      En la misma página ingresa Vs30, zona sísmica y categoría de edificación y genera la memoria de cálculo (Word).</li>
+  <li><b>Exporta.</b>
+      <i>Exportar resultados</i> (.hv / Excel / CSV), <i>Exportar gráfico</i> y <i>Generar reporte PDF…</i>.</li>
+  <li><b>Guarda el proyecto.</b>
+      <kbd>Ctrl</kbd>+<kbd>S</kbd> guarda todo lo procesado; al abrirlo después todo aparece como lo dejaste, sin reprocesar.</li>
+</ol>
+<figure><img src="img/05_resultados.png" alt="Página «4. Resultados H/V» tras procesar un registro de 60 minutos (San Cristóbal, datos de ejemplo): curva media con su banda ±σ, tabla de picos y criterios SESAME." loading="lazy"><figcaption>Página «4. Resultados H/V» tras procesar un registro de 60 minutos (San Cristóbal, datos de ejemplo): curva media con su banda ±σ, tabla de picos y criterios SESAME.</figcaption></figure>
+<div class="callout tip"><span class="label">Consejo</span><p>Pasa el cursor sobre los botones y campos: muchos tienen una ayuda breve. Todas las páginas se desplazan con la rueda del mouse.</p></div>
+</section>
+<section id="concepts"><h2>Conceptos clave</h2>
+<h3>Qué mide el H/V</h3>
+<p>El método de Nakamura divide el espectro de las componentes horizontales entre el de la vertical, en cada frecuencia. Sobre un suelo blando que descansa en un material mucho más rígido, esa razón suele mostrar un pico cuya frecuencia (f0) se asocia con la resonancia del depósito. No mide la velocidad de las ondas directamente: el pico informa del contraste de impedancia y, con otros datos, permite estimar espesores.</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Símbolo</th><th>Significado</th></tr></thead>
+  <tbody>
+    <tr><td><b>f0</b></td><td>Frecuencia del pico principal de la curva H/V media (Hz).</td></tr>
+    <tr><td><b>T0</b></td><td>Período fundamental, T0 = 1/f0 (s). En la norma E.030 se llama Ts.</td></tr>
+    <tr><td><b>A0</b></td><td>Amplitud H/V del pico.</td></tr>
+    <tr><td><b>±σ</b></td><td>Variabilidad entre ventanas. La banda sombreada de la curva es la media ±σ.</td></tr>
+    <tr><td><b>Ventana</b></td><td>Tramo del registro (p. ej. 30 o 60 s) con el que se calcula una curva H/V individual.</td></tr>
+    <tr><td><b>Vs30</b></td><td>Velocidad promedio de ondas de corte en los 30 m superiores. La ingresas tú; el programa no la calcula.</td></tr>
+    <tr><td><b>SESAME</b></td><td>Guía europea (2004) con criterios para juzgar si la curva es fiable y si el pico es claro.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>El flujo de procesamiento</h3>
+<p>Registro → quitar tendencia (y filtro pasa-altos opcional) → ventanas → rechazo de ventanas malas → taper y FFT de cada componente → suavizado → combinación de las dos horizontales → cociente H/V por ventana → apilamiento (media log-normal por defecto) → detección de picos → criterios SESAME.</p>
+<div class="callout note"><span class="label">Nota</span><p>Un pico alto no siempre es una resonancia del suelo: también puede venir de maquinaria, del sensor o de ruido de banda ancha. Por eso el programa incluye páginas de diagnóstico (espectros por componente, espectrogramas, evolución temporal).</p></div>
+</section>
+<section id="p1"><h2>1. Proyecto / Catálogo</h2>
+<p>Aquí se arma el proyecto: se agregan los registros, se asigna el orden de canales y se anotan los metadatos de cada sitio.</p>
+<figure><img src="img/02_catalogo.png" alt="Catálogo con un sitio ya procesado: la columna f0 se llena al procesar. A la derecha, los metadatos del sitio seleccionado y el registro de actividad debajo." loading="lazy"><figcaption>Catálogo con un sitio ya procesado: la columna f0 se llena al procesar. A la derecha, los metadatos del sitio seleccionado y el registro de actividad debajo.</figcaption></figure>
+
+<h3>Formatos de entrada</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Formato</th><th>Notas</th></tr></thead>
+  <tbody>
+    <tr><td><b>SEG-2</b> (.sg2, .seg2)</td><td>No indica qué canal es Z, N o E: debes asignarlo tú (ver más abajo).</td></tr>
+    <tr><td><b>SAF</b> (.saf)</td><td>Formato SESAME ASCII. Declara el componente de cada columna, así que se asigna solo y queda como verificado.</td></tr>
+    <tr><td><b>MiniSEED</b> (.mseed, .miniseed)</td><td>Si cada componente está en un archivo, selecciona los tres juntos: se agrupan por estación y el componente sale del código de canal (BHZ, EHN…). Los huecos se rellenan con ceros para que se vean.</td></tr>
+    <tr><td>SAC, GCF</td><td>Los abre ObsPy, pero no se han verificado con registros reales en este programa.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Mapeo de canales (SEG-2)</h3>
+<p>Un error aquí cambia todo el resultado sin dar aviso. Abre <i>Configurar mapeo de canales…</i> e indica el número de canal (empezando en 0) de cada componente:</p>
+<figure class="narrow"><img src="img/20_dialogo_mapeo_canales.png" alt="Diálogo de mapeo de canales con el orden del equipo MAE STnet (ST3) de los datos de ejemplo: canal 0 = Z, canal 2 = N, canal 1 = E." loading="lazy"><figcaption>Diálogo de mapeo de canales con el orden del equipo MAE STnet (ST3) de los datos de ejemplo: canal 0 = Z, canal 2 = N, canal 1 = E.</figcaption></figure>
+<div class="callout warn"><span class="label">Cuidado</span><p>No existe un orden universal: depende del equipo y de cómo se configuró. Confírmalo con la ficha del instrumento o con una prueba conocida. Mientras no marques «He verificado», el sitio aparece como «sin verificar» y el registro de actividad lo advierte.</p></div>
+
+<h3>Metadatos y coordenadas</h3>
+<p>Con el sitio seleccionado puedes editar nombre, latitud, longitud, elevación y notas. <i>Cargar coordenadas desde KMZ…</i> toma el punto de un archivo de Google Earth. Las coordenadas se necesitan para el análisis espacial (página 8).</p>
+<figure><img src="img/02b_catalogo_multisitio.png" alt="Un proyecto con tres sitios (HVSR-01 a HVSR-03, datos de ejemplo) con sus coordenadas cargadas." loading="lazy"><figcaption>Un proyecto con tres sitios (HVSR-01 a HVSR-03, datos de ejemplo) con sus coordenadas cargadas.</figcaption></figure>
+
+<h3>Botones</h3>
+<ul>
+  <li><b>Agregar archivo(s)…</b> — importa uno o varios registros (también puedes arrastrarlos a la ventana).</li>
+  <li><b>Quitar sitio</b> — elimina el sitio seleccionado del proyecto (no borra el archivo original).</li>
+  <li><b>Guardar proyecto / Guardar como… / Abrir proyecto…</b> — ver «Proyectos, formatos y exportaciones».</li>
+  <li><b>Procesar todos los sitios del proyecto</b> — procesa en lote con los parámetros de cada sitio. Si hay sitios con el mapeo sin verificar, pide confirmación.</li>
+</ul>
+</section>
+<section id="p2"><h2>2. Señal / Ventanas</h2>
+<p>Muestra las tres trazas (Z, N, E) y las ventanas de análisis sobre ellas. Sirve para decidir qué partes del registro se usan.</p>
+<figure><img src="img/03_senal_ventanas.png" alt="Registro de 60 minutos con sus ventanas de 60 s: verdes = se usan, rojas = rechazadas (aquí por outlier de amplitud)." loading="lazy"><figcaption>Registro de 60 minutos con sus ventanas de 60 s: verdes = se usan, rojas = rechazadas (aquí por outlier de amplitud).</figcaption></figure>
+<ul>
+  <li><b>Generar ventanas</b> — divide el registro según el largo y el traslape de la página 3.</li>
+  <li><b>Aplicar rechazo STA/LTA</b> — descarta ventanas con transitorios (golpes, pasos, vehículos cercanos) comparando la energía de corto y largo plazo.</li>
+  <li><b>Aplicar rechazo por outlier de amplitud</b> — descarta ventanas cuya amplitud se aleja mucho de las demás.</li>
+  <li><b>Restaurar todas (válidas)</b> — vuelve a marcar todas como válidas.</li>
+  <li><b>Clic sobre una ventana</b> la acepta o la rechaza a mano.</li>
+</ul>
+<div class="callout note"><span class="label">Nota</span><p>Las muestras malas (valores no finitos, tramos planos, saturación) y el criterio de Cox et al. (2020) se aplican solos al procesar, según lo que actives en la página 3; no necesitan un botón aquí.</p></div>
+<div class="callout tip"><span class="label">Consejo</span><p>Antes de rechazar a ciegas mira el espectrograma (página 10): un transitorio aparece como una franja vertical y una fuente de frecuencia fija como una línea horizontal.</p></div>
+</section>
+<section id="p3"><h2>3. Parámetros</h2>
+<p>Los parámetros se guardan por sitio. Con <i>Aplicar esta configuración a todos los sitios del proyecto</i> los copias a los demás (cada sitio conserva su pico elegido).</p>
+<figure><img src="img/04_parametros.png" alt="Página de parámetros (parte superior): ventaneo, suavizado, taper, filtro pasa-altas, combinación horizontal y modo de procesamiento." loading="lazy"><figcaption>Página de parámetros (parte superior): ventaneo, suavizado, taper, filtro pasa-altas, combinación horizontal y modo de procesamiento.</figcaption></figure>
+<figure><img src="img/04b_parametros_final.png" alt="Parte inferior: rechazo automático de ventanas y apilamiento." loading="lazy"><figcaption>Parte inferior: rechazo automático de ventanas y apilamiento.</figcaption></figure>
+<div class="table-wrap"><table>
+  <thead><tr><th>Grupo</th><th>Qué controla</th></tr></thead>
+  <tbody>
+    <tr><td><b>Ventaneo</b></td><td>Longitud de cada ventana (por defecto 30 s) y traslape. SESAME pide ventanas de al menos 10/f0 s y suficientes ciclos: para f0 bajos usa ventanas largas.</td></tr>
+    <tr><td><b>Smoothing</b></td><td>Método espectral (FAS recomendado o Welch), suavizado Konno-Ohmachi (b = 40 por defecto) o Parzen, banda de salida (0.5–50 Hz por defecto) y número de puntos (300).</td></tr>
+    <tr><td><b>Tapering</b></td><td>Ventana de suavizado de los bordes: Tukey (10 % por lado por defecto), Hann o Hamming.</td></tr>
+    <tr><td><b>Filtro pasa-altas</b></td><td>Opcional (apagado por defecto): frecuencia de corte y orden Butterworth.</td></tr>
+    <tr><td><b>Combinación de componentes horizontales</b></td><td>Cómo se juntan N y E: media aritmética, geométrica (por defecto), cuadrática («squared average»), energía horizontal total, suma vectorial, máximo, RotD50, azimut único o «Directional energy» (aproximación al control de Geopsy).</td></tr>
+    <tr><td><b>Modo de procesamiento</b></td><td>Tradicional (por defecto) o campo difuso (aproximación simplificada). La opción «Azimutal» no cambia el H/V: el barrido se calcula en la página 7 y aquí solo se define su paso.</td></tr>
+    <tr><td><b>Rechazo automático de ventanas</b></td><td>Muestras malas (activo por defecto), STA/LTA, outlier de amplitud y Cox et al. (2020) en el dominio de la frecuencia.</td></tr>
+    <tr><td><b>Apilamiento</b></td><td>Cómo se promedian las curvas de las ventanas: media log-normal (recomendada, estándar SESAME), aritmética o mediana.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Atajos para empezar</h3>
+<ul>
+  <li><b>Preajuste genérico estilo Geopsy</b> — punto de partida: combinación «squared average», Konno-Ohmachi 40, sin pasa-altos y sin rechazo automático.</li>
+  <li><b>Importar parámetros desde un .log de Geopsy…</b> — lee el .log que Geopsy escribe junto a cada .hv y copia largo y traslape de ventana, taper, suavizado, malla de frecuencias, combinación horizontal y anti-trigger. Al terminar muestra qué quedó aproximado o sin equivalente.</li>
+</ul>
+<div class="callout warn"><span class="label">Cuidado</span><p>El valor de A0 y el veredicto de claridad SESAME cambian bastante con el largo de ventana, el suavizado y el rechazo. Usa el mismo conjunto de parámetros en todos los sitios de un proyecto y anótalo en tu informe.</p></div>
+</section>
+<section id="p4"><h2>4. Resultados H/V</h2>
+<p>Es la página central: procesa el sitio activo y reúne la curva H/V, los picos, el veredicto SESAME y la clasificación E.030.</p>
+
+<h3>La curva</h3>
+<figure><img src="img/05b_resultados_sin_curvas.png" alt="Con la casilla «Mostrar curvas individuales» desmarcada solo se ven la curva media y su banda ±σ." loading="lazy"><figcaption>Con la casilla «Mostrar curvas individuales» desmarcada solo se ven la curva media y su banda ±σ.</figcaption></figure>
+<div class="table-wrap"><table>
+  <thead><tr><th>Elemento del gráfico</th><th>Qué es</th></tr></thead>
+  <tbody>
+    <tr><td>Línea negra gruesa</td><td>Curva H/V media (apilada).</td></tr>
+    <tr><td>Líneas negras discontinuas</td><td>Media ±σ.</td></tr>
+    <tr><td>Curvas de colores</td><td>La curva de cada ventana (se pueden ocultar con la casilla).</td></tr>
+    <tr><td>Línea roja punteada gruesa + banda gris</td><td>f0 del promedio: la frecuencia del máximo de la curva media. La banda es ±1σ de la frecuencia del pico entre ventanas. Es el f0 que usan SESAME, E.030 y los informes.</td></tr>
+    <tr><td>Líneas rojas finas</td><td>Picos secundarios de la curva media (hasta cinco).</td></tr>
+    <tr><td>Línea azul discontinua + banda azul</td><td>f0 de ventanas: media geométrica del pico de cada ventana cerca de f0, con su ±1σ. Es el segundo estimador que reporta Geopsy. Si coincide con la roja, el pico es estable; si están muy separadas, es ancho o inestable.</td></tr>
+    <tr><td>Línea naranja punteada</td><td>f0 de un .hv de Geopsy, si lo superpones.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Tabla de picos y criterios SESAME</h3>
+<figure><img src="img/05c_resultados_tablas.png" alt="Parte inferior de la página: tabla de picos (el dominante resaltado en negro y negrita) y criterios SESAME en verde (cumple) y rojo (no cumple)." loading="lazy"><figcaption>Parte inferior de la página: tabla de picos (el dominante resaltado en negro y negrita) y criterios SESAME en verde (cumple) y rojo (no cumple).</figcaption></figure>
+<ul>
+  <li>La <b>primera fila</b> es el pico dominante y está resaltada. Las columnas son f0, su ±σ, el período T0 = 1/f0, la amplitud y su ±σ.</li>
+  <li>Debajo del veredicto («CUMPLE» / «NO CUMPLE») están los 3 criterios de fiabilidad y los 6 de claridad. El veredicto global exige fiabilidad completa y al menos 5 de 6 criterios de claridad. Ver «Criterios SESAME».</li>
+</ul>
+
+<h3>Elegir otro pico</h3>
+<p>El pico automático es el máximo de la curva. Si no es el que te interesa, el grupo «Pico f0 y comparación con Geopsy» ofrece:</p>
+<ol class="steps">
+  <li><b>Por banda.</b> Escribe «Buscar f0 entre … y …» y pulsa <i>Aplicar banda</i> (cambiar los números solo no hace nada). Se busca el pico más alto dentro de la banda; «(libre)» es sin límite. Para ver un cambio, la banda debe dejar fuera al pico actual.</li>
+  <li><b>Con un clic.</b> Pulsa <i>Elegir pico con clic</i> y haz clic en la curva. El pico pasa a ser el máximo de la curva media dentro de ±12 % de la frecuencia del clic. Desactiva antes el zoom y el desplazamiento de la barra de herramientas del gráfico, o el clic se ignora. Si el máximo ya era el pico principal, no verás cambios.</li>
+  <li><b>Volver al automático.</b> <i>Pico automático</i> quita la banda y el pico manual.</li>
+</ol>
+<p>En los tres casos se recalculan SESAME y E.030 sin reprocesar la señal; la curva no cambia, solo cuál pico es el dominante.</p>
+
+<h3>Comparar con Geopsy</h3>
+<p><i>Superponer .hv de Geopsy…</i> dibuja en naranja la curva de un archivo .hv de Geopsy y muestra las diferencias de f0, A0 y de forma de la curva. <i>Quitar superposición</i> la retira.</p>
+
+<h3>Clasificación E.030</h3>
+<p>Ingresa Vs30, su fuente, la zona sísmica (Z1–Z4) y la categoría de edificación (A–D) y pulsa <i>Generar memoria de cálculo (Word)…</i>. Detalles en «Clasificación E.030 y memoria».</p>
+
+<h3>Botones de la parte superior</h3>
+<ul>
+  <li><b>Procesar sitio activo</b> — calcula el H/V del sitio activo en segundo plano; la ventana sigue respondiendo.</li>
+  <li><b>Exportar resultados (HV/Excel/CSV)…</b>, <b>Exportar gráfico (PNG/SVG/PDF)…</b>, <b>Generar reporte PDF…</b> — ver «Proyectos, formatos y exportaciones».</li>
+</ul>
+</section>
+<section id="p5"><h2>5. Evolución temporal del HVSR</h2>
+<p>Responde a una pregunta práctica: ¿el registro fue lo bastante largo para que la curva se estabilice? Muestra, para cada ventana y en el tiempo, el H/V (arriba en 2D, abajo en superficie 3D).</p>
+<figure><img src="img/06_evolucion_temporal.png" alt="Tres vistas: HVSR de cada ventana, HVSR acumulado y desviación estándar acumulada, cada una en 2D y 3D." loading="lazy"><figcaption>Tres vistas: HVSR de cada ventana, HVSR acumulado y desviación estándar acumulada, cada una en 2D y 3D.</figcaption></figure>
+<ul>
+  <li><b>HVSR temporal (por ventana)</b> — la curva de cada ventana; las bandas verticales constantes indican un pico estable.</li>
+  <li><b>HVSR acumulado</b> — el promedio hasta cada instante; si las bandas dejan de moverse, agregar más tiempo ya no cambia la curva.</li>
+  <li><b>Desviación estándar acumulada</b> — debe bajar y estabilizarse; si sigue alta, la medición es corta o ruidosa.</li>
+</ul>
+<div class="callout note"><span class="label">Nota</span><p>Los gráficos 3D se pueden rotar con el mouse. Se necesitan al menos dos ventanas válidas.</p></div>
+</section>
+<section id="p6"><h2>6. Espectros por componente</h2>
+<p>Equivale a la herramienta «Spectrum» de Geopsy. Muestra el espectro promedio de Z, N, E y del horizontal combinado (H), con el H/V debajo en el mismo eje de frecuencias, y un diagnóstico del origen del pico.</p>
+<figure><img src="img/07_espectros_componente.png" alt="Arriba, espectros de Z (rojo), N (verde), E (azul) y H (discontinuo negro) con su banda ±σ; abajo, el H/V con f0 y los flancos f0/2 y 2·f0." loading="lazy"><figcaption>Arriba, espectros de Z (rojo), N (verde), E (azul) y H (discontinuo negro) con su banda ±σ; abajo, el H/V con f0 y los flancos f0/2 y 2·f0.</figcaption></figure>
+<p>Pulsa <i>Calcular espectros del sitio activo</i> (después de procesar). <i>Exportar espectros (CSV)…</i> guarda los datos.</p>
+<h3>Cómo leer el diagnóstico</h3>
+<p>El programa compara cada espectro en f0 con sus flancos (f0/2 y 2·f0). Un máximo en H o un mínimo en V solo cuentan si son <i>locales</i>:</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Resultado</th><th>Significa</th></tr></thead>
+  <tbody>
+    <tr><td><b>H</b></td><td>H tiene un máximo local en f0 y V no tiene un mínimo: el pico viene de las horizontales (lo más parecido a una resonancia).</td></tr>
+    <tr><td><b>V</b></td><td>V tiene un mínimo local en f0: el pico viene de un hueco en la vertical.</td></tr>
+    <tr><td><b>mixto</b></td><td>Aportan los dos.</td></tr>
+    <tr><td><b>pendientes</b></td><td>El H/V tiene un máximo local, pero ni H ni V tienen una característica local: nace de la diferencia de pendientes entre ambos espectros (típico de la respuesta del sensor o de ruido de banda ancha). Es poco probable que sea una resonancia clara del suelo.</td></tr>
+    <tr><td><b>sin pico</b></td><td>El H/V no destaca sobre sus flancos.</td></tr>
+  </tbody>
+</table></div>
+<p>Además avisa si las <b>tres</b> componentes suben a la vez en f0: puede ser una fuente monocromática (maquinaria, tráfico regular) y no el suelo.</p>
+<div class="callout warn"><span class="label">Cuidado</span><p>El diagnóstico es indicativo: un solo registro y un par de flancos no sustituyen el criterio del especialista.</p></div>
+</section>
+<section id="p7"><h2>7. Análisis azimutal</h2>
+<p>Calcula el H/V girando la componente horizontal de 0° a 180° para detectar anisotropía direccional del sitio (por ejemplo, por topografía o fallas).</p>
+<figure><img src="img/08_azimutal.png" alt="A la izquierda, la amplitud del pico H/V según el azimut; a la derecha, su frecuencia. Una amplitud casi circular indica un sitio aproximadamente isótropo." loading="lazy"><figcaption>A la izquierda, la amplitud del pico H/V según el azimut; a la derecha, su frecuencia. Una amplitud casi circular indica un sitio aproximadamente isótropo.</figcaption></figure>
+<ul>
+  <li>Pulsa <i>Calcular barrido azimutal</i> (el paso, en grados, se define en la página 3).</li>
+  <li>La línea de texto da la <b>razón de anisotropía</b> (amplitud máxima / mínima) y el azimut de máxima amplitud. Por encima de un umbral se informa «anisotropía direccional significativa»; si no, «aproximadamente isotrópico».</li>
+</ul>
+</section>
+<section id="p8"><h2>8. Análisis espacial / Mapas</h2>
+<p>Reúne varios sitios con coordenadas para ver cómo varía f0, T0 o la amplitud en el área. Necesita al menos dos sitios con latitud y longitud (cárgalas desde KMZ en la página 1).</p>
+<figure><img src="img/12_espacial_sitios.png" alt="Mapa de sitios (datos de ejemplo, carpeta HVSR 3), coloreados por f0, con el polígono del área de estudio." loading="lazy"><figcaption>Mapa de sitios (datos de ejemplo, carpeta HVSR 3), coloreados por f0, con el polígono del área de estudio.</figcaption></figure>
+<figure><img src="img/12b_espacial_f0.png" alt="Mapa de isofrecuencias de f0, interpolado y recortado al polígono. Las curvas blancas son isolíneas." loading="lazy"><figcaption>Mapa de isofrecuencias de f0, interpolado y recortado al polígono. Las curvas blancas son isolíneas.</figcaption></figure>
+<ul>
+  <li><b>Vista</b> — mapa de sitios, isofrecuencias (f0), isoperiodos (T0), amplitud o sección de perfil (sondeos virtuales). Haz clic en un sitio del mapa para seleccionarlo.</li>
+  <li><b>Colorear sitios por</b> — f0 o similitud con un sitio de referencia (correlación cruzada o LCSS).</li>
+  <li><b>Cargar polígono de límite (KMZ)…</b> / <b>Quitar polígono</b> — recorta los mapas al área de estudio.</li>
+  <li><b>Actualizar lista de sitios</b> — refresca la lista tras agregar o procesar sitios.</li>
+</ul>
+<div class="callout note"><span class="label">Nota</span><p>La interpolación es IDW (siempre disponible). El kriging solo está disponible si la biblioteca opcional PyKrige está instalada; la pantalla lo indica.</p></div>
+<div class="callout warn"><span class="label">Cuidado</span><p>Con pocos sitios el mapa interpolado es una ayuda visual, no una medición entre los puntos.</p></div>
+</section>
+<section id="p9"><h2>9. Basamento / Vs (opcional)</h2>
+<p>Módulo opcional y orientativo: estima la profundidad del basamento a partir de f0 y ajusta un perfil simple de Vs. Sirve para apoyar, no para reemplazar, un ensayo MASW o de refracción.</p>
+<figure><img src="img/10_basamento_vs.png" alt="Relación empírica f0 → profundidad (ley de potencia de Ibs-von Seht y Wohlenberg) e inversión de una capa con la tabla de resultados." loading="lazy"><figcaption>Relación empírica f0 → profundidad (ley de potencia de Ibs-von Seht y Wohlenberg) e inversión de una capa con la tabla de resultados.</figcaption></figure>
+<ul>
+  <li><b>Relación empírica</b> — h = a·f0<sup>b</sup> (ley de potencia, con coeficientes generales de la literatura) o cuarto de onda con el Vs medio que asumas. Pulsa <i>Calcular</i>.</li>
+  <li><b>Inversión (Thomson-Haskell)</b> — una capa (solución cerrada) o dos capas (búsqueda en malla). Defines rangos de Vs y espesor, densidades y la resolución de la malla; <i>Ejecutar inversión</i> devuelve el perfil y dibuja la curva teórica sobre la observada.</li>
+</ul>
+<figure><img src="img/10b_basamento_vs_grafico.png" alt="Parte inferior de la página: H/V observada frente a la función de transferencia SH teórica." loading="lazy"><figcaption>Parte inferior de la página: H/V observada frente a la función de transferencia SH teórica.</figcaption></figure>
+<div class="callout warn"><span class="label">Cuidado</span><p>El modelo supone incidencia vertical de ondas de corte (respuesta de sitio 1D clásica), no la elipticidad de las ondas Rayleigh que explica rigurosamente el pico H/V en ruido ambiental. Trata el resultado como una estimación preliminar y calibra los coeficientes con datos locales (SPT, refracción) antes de usarlo.</p></div>
+</section>
+<section id="p10"><h2>10. Espectrogramas (diagnóstico)</h2>
+<p>Muestra el espectrograma de cada traza (Z, N, E) del registro completo, aparte del flujo de procesamiento: no modifica ventanas ni resultados. Sirve para inspeccionar el registro.</p>
+<figure><img src="img/11_espectrogramas.png" alt="Espectrogramas de San Cristóbal (60 min, 0–50 Hz): franjas verticales periódicas (transitorios) y una línea horizontal cerca de 9.5 Hz entre ~2000 y ~2290 s (fuente de frecuencia fija)." loading="lazy"><figcaption>Espectrogramas de San Cristóbal (60 min, 0–50 Hz): franjas verticales periódicas (transitorios) y una línea horizontal cerca de 9.5 Hz entre ~2000 y ~2290 s (fuente de frecuencia fija).</figcaption></figure>
+<div class="table-wrap"><table>
+  <thead><tr><th>Control</th><th>Efecto</th></tr></thead>
+  <tbody>
+    <tr><td><b>Segmento</b></td><td>Duración de cada FFT. La resolución en frecuencia es 1/segmento (8 s → 0.125 Hz). Más largo separa mejor las frecuencias; más corto sigue mejor los cambios en el tiempo. Cambiarlo exige volver a calcular.</td></tr>
+    <tr><td><b>Frecuencia máx.</b></td><td>Límite superior mostrado (solo redibuja).</td></tr>
+    <tr><td><b>Eje</b></td><td>Lineal o logarítmico; el logarítmico realza la banda baja (< 5 Hz).</td></tr>
+    <tr><td><b>Marcar ventanas rechazadas</b></td><td>Sombrea en rojo las ventanas descartadas.</td></tr>
+  </tbody>
+</table></div>
+<figure><img src="img/11b_espectrogramas_log.png" alt="Misma vista con el eje de frecuencia logarítmico: se aprecia que por debajo de ~2 Hz la energía cae en las tres componentes." loading="lazy"><figcaption>Misma vista con el eje de frecuencia logarítmico: se aprecia que por debajo de ~2 Hz la energía cae en las tres componentes.</figcaption></figure>
+<p>El color es la potencia relativa en dB, con una misma escala para las tres componentes (percentiles 5–99.5 de todos los valores). Una <b>línea horizontal brillante</b> indica una fuente de frecuencia fija (maquinaria, tráfico regular); una <b>franja vertical</b>, un transitorio (paso, golpe, vehículo).</p>
+<div class="callout tip"><span class="label">Consejo</span><p>Si la energía cae mucho por debajo de cierta frecuencia en las tres componentes, el sensor probablemente no ve esa banda (frecuencia natural del geófono). Un pico de H/V ahí debe tomarse con cautela.</p></div>
+</section>
+<section id="files"><h2>Proyectos, formatos y exportaciones</h2>
+<h3>Proyecto (.hvsrproj)</h3>
+<p><b>Guardar proyecto</b> (<kbd>Ctrl</kbd>+<kbd>S</kbd>) escribe un único archivo con todo lo procesado: sitios, parámetros, ventanas, resultados y picos, más las curvas por ventana, los espectros por componente y el barrido azimutal, el sitio activo y la página en que estabas, y la plantilla del reporte. <b>Guardar como…</b> (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd>) elige otra ruta. Al abrir el proyecto todo aparece como lo dejaste, <b>sin reprocesar</b>.</p>
+<ul>
+  <li>Las formas de onda <b>no</b> se guardan: se vuelven a leer de los archivos originales, que deben seguir en su carpeta. Si falta alguno se avisa al abrir y los resultados guardados se conservan (sin señal ni posibilidad de reprocesar).</li>
+  <li>Los espectrogramas tampoco se guardan; se recalculan en un par de segundos.</li>
+  <li>Los proyectos de versiones anteriores (JSON simple) se siguen abriendo; en ellos faltan las curvas por ventana hasta que reprocesas.</li>
+  <li>El archivo se escribe primero a uno temporal y luego reemplaza al anterior: un fallo a medio guardado no corrompe un proyecto existente.</li>
+</ul>
+
+<h3>Exportar resultados</h3>
+<p><i>Exportar resultados (HV/Excel/CSV)…</i> elige el formato por el filtro o la extensión:</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Formato</th><th>Contenido</th></tr></thead>
+  <tbody>
+    <tr><td><b>.hv</b> (Geopsy)</td><td>Mismo encabezado y columnas que Geopsy (frecuencia, promedio, mínimo, máximo), con f0 del promedio, f0 de ventanas y número de ventanas; además escribe un <b>.log</b> con los parámetros.</td></tr>
+    <tr><td><b>Excel</b> (.xlsx)</td><td>Hojas Resumen, Curva HVSR (con gráfico), Picos, SESAME, Ventanas y Curvas por ventana.</td></tr>
+    <tr><td><b>CSV</b></td><td>La curva H/V: frecuencia, promedio, mínimo, máximo, desviación estándar del logaritmo y percentiles 10 y 90.</td></tr>
+  </tbody>
+</table></div>
+<p><i>Exportar gráfico (PNG/SVG/PDF)…</i> guarda el gráfico tal como lo ves (si ocultaste las curvas individuales, salen ocultas). El clic derecho sobre cualquier gráfico permite copiarlo o guardarlo como PNG de 300 dpi.</p>
+
+<h3>Informes PDF</h3>
+<p><i>Generar reporte PDF…</i> abre el diálogo de plantilla (empresa, proyecto, logotipo opcional, pie de página y formato).</p>
+<figure class="narrow"><img src="img/21_dialogo_plantilla_reporte.png" alt="Diálogo de plantilla del reporte." loading="lazy"><figcaption>Diálogo de plantilla del reporte.</figcaption></figure>
+<ul>
+  <li><b>Clásico</b> — una página con el registro de campo, la curva con su pico, el cuadro de resultados (Vs30, clasificación, f0, T0, A0) y la verificación SESAME, más la página de la evolución temporal y el anexo E.030.</li>
+  <li><b>Detallado</b> — secciones numeradas: datos del sitio, parámetros, curva, picos, criterios SESAME, E.030 y evolución temporal.</li>
+  <li><b>Consolidado</b> — desde el menú Proyecto → <i>Generar reporte consolidado (PDF)…</i>: un solo documento con todos los sitios procesados.</li>
+</ul>
+<figure><img src="img/30_informe_clasico.png" alt="Informe clásico de una página (datos de ejemplo)." loading="lazy"><figcaption>Informe clásico de una página (datos de ejemplo).</figcaption></figure>
+<figure><img src="img/32_informe_detallado_p1.png" alt="Primera página del informe detallado." loading="lazy"><figcaption>Primera página del informe detallado.</figcaption></figure>
+<figure><img src="img/31_informe_clasico_temporal.png" alt="Página de evolución temporal incluida en el informe." loading="lazy"><figcaption>Página de evolución temporal incluida en el informe.</figcaption></figure>
+</section>
+<section id="productivity"><h2>Copiar, menús y atajos</h2>
+<h3>Copiar tablas a Excel</h3>
+<p>En cualquier tabla (picos, criterios SESAME, catálogo, capas del perfil) haz clic y pulsa <kbd>Ctrl</kbd>+<kbd>C</kbd>: se copia la selección —o la tabla completa si no hay selección— <b>con sus encabezados</b>, separada por tabulaciones, lista para pegar en Excel con <kbd>Ctrl</kbd>+<kbd>V</kbd>.</p>
+<figure class="narrow"><img src="img/24_menu_clic_derecho_tabla.png" alt="Menú de clic derecho de una tabla." loading="lazy"><figcaption>Menú de clic derecho de una tabla.</figcaption></figure>
+<p>El clic derecho ofrece además copiar toda la tabla y una variante con <b>coma decimal</b>: si tu Excel usa coma decimal (típico en español), <code>1.587</code> podría leerse como 1587 o como una fecha; con esa opción se copia <code>1,587</code>.</p>
+
+<h3>Copiar o guardar un gráfico</h3>
+<p>Clic derecho sobre cualquier gráfico: <i>Copiar imagen al portapapeles</i> o <i>Guardar como PNG (300 dpi)…</i>. La barra de herramientas del gráfico ofrece además zoom, desplazamiento y guardado.</p>
+<figure class="narrow"><img src="img/25_menu_clic_derecho_grafico.png" alt="Menú de clic derecho de un gráfico." loading="lazy"><figcaption>Menú de clic derecho de un gráfico.</figcaption></figure>
+
+<h3>Menús y atajos</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Atajo</th><th>Acción</th></tr></thead>
+  <tbody>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>N</kbd></td><td>Nuevo proyecto</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>O</kbd></td><td>Abrir proyecto</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>S</kbd></td><td>Guardar proyecto (pide la ruta solo la primera vez)</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd></td><td>Guardar proyecto como…</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>C</kbd></td><td>Copiar la tabla seleccionada (con encabezados)</td></tr>
+    <tr><td><kbd>F1</kbd></td><td>Abrir este manual</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>Q</kbd></td><td>Salir</td></tr>
+  </tbody>
+</table></div>
+<p>Menú <b>Apariencia</b>: temas Claro, Oscuro y, en «Otros recomendados», Azul profesional y Alto contraste (se recuerda la elección). Menú <b>Ventana</b>: mostrar u ocultar el registro de actividad y restablecer el diseño.</p>
+<figure class="narrow"><img src="img/23_menu_proyecto.png" alt="Menú Proyecto." loading="lazy"><figcaption>Menú Proyecto.</figcaption></figure>
+<figure><img src="img/26_tema_oscuro_resultados.png" alt="El tema Oscuro en la página de resultados." loading="lazy"><figcaption>El tema Oscuro en la página de resultados.</figcaption></figure>
+</section>
+<section id="sesame"><h2>Criterios SESAME</h2>
+<p>Los criterios SESAME (2004) evalúan dos cosas: si la <b>curva es fiable</b> y si el <b>pico es claro</b>. En la tabla de la página 4 cada criterio aparece en verde (cumple) o rojo (no cumple) con su detalle.</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Grupo</th><th>Criterio</th><th>Qué verifica</th></tr></thead>
+  <tbody>
+    <tr><td rowspan="3"><span class="pill">Fiabilidad</span></td><td><code>f0 &gt; 10 / Lw</code></td><td>La ventana es lo bastante larga para ver varios ciclos de f0.</td></tr>
+    <tr><td><code>nc(f0) = Lw·nw·f0 &gt; 200</code></td><td>Hay suficientes ciclos significativos en total (largo × número de ventanas × f0).</td></tr>
+    <tr><td><code>σA(f) &lt; 2</code> (o 3 si f0 &lt; 0.5 Hz) en [f0/4, 4f0]</td><td>La dispersión de la curva entre ventanas es baja cerca del pico.</td></tr>
+    <tr><td rowspan="6"><span class="pill">Claridad</span></td><td><code>existe f−</code> en [f0/4, f0] con <code>A(f−) &lt; A0/2</code></td><td>La curva cae a la mitad por debajo del pico.</td></tr>
+    <tr><td><code>existe f+</code> en [f0, 4f0] con <code>A(f+) &lt; A0/2</code></td><td>La curva cae a la mitad por encima del pico.</td></tr>
+    <tr><td><code>A0 &gt; 2</code></td><td>El pico tiene una amplitud suficiente.</td></tr>
+    <tr><td><code>|f<sub>pico</sub>[A<sub>media</sub> ± σ] − f0| &lt; ε(f0)</code></td><td>El pico de las curvas media ±σ queda cerca de f0.</td></tr>
+    <tr><td><code>σf(f0) &lt; ε(f0)</code></td><td>La frecuencia del pico es estable entre ventanas.</td></tr>
+    <tr><td><code>σ<sub>log10</sub> H/V(f0) &lt; θ(f0)</code></td><td>La amplitud del pico es estable entre ventanas.</td></tr>
+  </tbody>
+</table></div>
+<p>El veredicto global es <b>CUMPLE</b> si se cumplen los 3 de fiabilidad y al menos 5 de los 6 de claridad. ε(f0) y θ(f0) son umbrales que dependen del rango de f0, tomados de la guía SESAME.</p>
+<div class="callout note"><span class="label">Nota</span><p>«NO CUMPLE» no significa que la medición sea inútil: un pico real pero ancho o de poca amplitud (A0 &lt; 2) falla la claridad. Interprétalo junto con la curva y con los diagnósticos.</p></div>
+<div class="callout warn"><span class="label">Cuidado</span><p>Los criterios se implementaron según la guía SESAME, con las tablas numéricas de ε y θ transcritas, y aún no se han contrastado con un caso de referencia publicado.</p></div>
+</section>
+<section id="e030"><h2>Clasificación E.030 y memoria</h2>
+<p>A partir del Vs30, la zona sísmica y el f0 medido, el programa clasifica el perfil de suelo, obtiene los parámetros de sitio y verifica el período predominante, según las tablas de la norma E.030 (edición 2026).</p>
+<h3>Perfiles de suelo</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Perfil</th><th>Nombre (Tabla N°2)</th><th>Vs30 (Tabla N°3)</th></tr></thead>
+  <tbody>
+    <tr><td>S0</td><td>Roca</td><td>Vs30 ≥ 800 m/s</td></tr>
+    <tr><td>S1</td><td>Suelos muy rígidos</td><td>550 ≤ Vs30 &lt; 800 m/s</td></tr>
+    <tr><td>S2</td><td>Suelos rígidos</td><td>350 ≤ Vs30 &lt; 550 m/s</td></tr>
+    <tr><td>S3</td><td>Suelos intermedios</td><td>200 ≤ Vs30 &lt; 350 m/s</td></tr>
+    <tr><td>S4</td><td>Suelos blandos</td><td>Vs30 &lt; 200 m/s</td></tr>
+    <tr><td>S5</td><td>Suelos excepcionales</td><td>No se clasifica por Vs30: requiere estudio de sitio (Art. 13)</td></tr>
+  </tbody>
+</table></div>
+<p>El límite inferior de cada intervalo es inclusivo (Vs30 = 550 m/s es S1).</p>
+
+<h3>Qué calcula</h3>
+<ul>
+  <li><b>Z</b> — factor de zona (Z1–Z4).</li>
+  <li><b>S</b> — factor de suelo; en los perfiles S2 y S3 se <b>interpola</b> linealmente según el Vs30 dentro de su rango. En zona Z4 con perfil S4 la norma exige un análisis de respuesta de sitio y no hay factor S de tabla.</li>
+  <li><b>Tp</b> y <b>TL</b> — períodos del espectro (Tabla N°5), también interpolados en S2 y S3.</li>
+  <li><b>Ts = 1/f0</b> y la verificación <b>Ts &lt; 0.65·Tp</b>.</li>
+  <li><b>Factor C</b> (Tabla N°6), solo como referencia: depende del período de la estructura, que el programa no conoce.</li>
+</ul>
+
+<h3>Art. 14.8: reclasificación</h3>
+<p>Para edificaciones de categoría <b>A o B en zona Z4</b> sobre suelos <b>S1 a S4</b>, si Ts ≥ 0.65·Tp se toma el perfil siguiente más desfavorable, con el límite superior de Tp (o se hace un estudio de sitio específico). En otros casos la verificación se muestra como información adicional y la memoria lo indica. Si el perfil ya es S4, el siguiente (S5) no tiene parámetros: corresponde un estudio de sitio.</p>
+
+<h3>La memoria de cálculo (Word)</h3>
+<p><i>Generar memoria de cálculo (Word)…</i> crea un documento con: factor de zona, clasificación del perfil por Vs30, factor de suelo S, períodos Tp y TL (con la interpolación paso a paso), período predominante del sitio, verificación Ts &lt; 0.65·Tp, reclasificación del Art. 14.8, factor C de referencia y consideraciones y limitaciones. Cada número se calcula en el programa; el documento solo lo presenta.</p>
+<div class="callout warn"><span class="label">Cuidado</span><p>Las tablas se transcribieron del texto de la norma E.030 (edición 2026) proporcionado. Cótejalas con el texto oficial vigente antes de un uso crítico, y verifica que el Vs30 que ingresas provenga de un ensayo apropiado (MASW, refracción, SPT) o declara que es teórico.</p></div>
+</section>
+<section id="license"><h2>Licencia y activación</h2>
+<p>El programa se entrega con una <b>prueba gratuita de 14 días</b>. Después necesita una <b>licencia</b> de JLVSpectra Labs co. atada a tu equipo, con fecha de vencimiento o perpetua. Todo funciona sin conexión a internet: el programa no envía ni recibe nada.</p>
+<figure><img src="img/27_dialogo_licencia.png" alt="Diálogo «Licencia y activación» durante la prueba (equipo de demostración). Se abre solo al iniciar y desde Ayuda → Licencia y activación…" loading="lazy"><figcaption>Diálogo «Licencia y activación» durante la prueba (equipo de demostración). Se abre solo al iniciar y desde Ayuda → Licencia y activación…</figcaption></figure>
+<h3>Cómo activar una licencia</h3>
+<ol class="steps">
+  <li>Abre <b>Ayuda → Licencia y activación…</b> y pulsa <i>Copiar código</i>. Es el <b>código de máquina</b> (<code>XXXX-XXXX-XXXX-XXXX-XXXX</code>).</li>
+  <li>Envíalo a JLVSpectra Labs co. Recibirás una licencia: un texto que empieza con <code>PYHVSR1.</code> o un archivo <code>.lic</code>.</li>
+  <li>Pega el texto en el cuadro, o pulsa <i>Cargar archivo .lic…</i>, y luego <i>Activar licencia</i>.</li>
+</ol>
+<figure><img src="img/27b_licencia_activa.png" alt="Licencia activa con vencimiento: el diálogo muestra el cliente, el identificador y la vigencia." loading="lazy"><figcaption>Licencia activa con vencimiento: el diálogo muestra el cliente, el identificador y la vigencia.</figcaption></figure>
+<h3>Qué debes saber</h3>
+<ul>
+  <li><b>El código de máquina</b> — es un resumen irreversible del identificador de Windows de tu equipo: no contiene tu nombre ni datos personales. La licencia solo funciona en el equipo cuyo código se informó.</li>
+  <li><b>Renovar</b> — cuando una licencia con fecha esté por vencer, el programa avisa al iniciar y en la barra de título. Solicita la renovación con el mismo código y actívala igual que la primera vez: se instala sobre la anterior.</li>
+  <li><b>Cambio de equipo o reinstalación de Windows</b> — el código de máquina cambia: solicita una licencia nueva con el código nuevo.</li>
+  <li><b>Si vence con el programa abierto</b> — se bloquea la ventana y se pide una licencia; tu trabajo guardado no se pierde. Guarda el proyecto (<kbd>Ctrl</kbd>+<kbd>S</kbd>) antes de que venza.</li>
+  <li><b>Fecha del sistema</b> — si el reloj del equipo está atrasado respecto de la última vez que usaste el programa, este se bloquea hasta que lo corrijas.</li>
+  <li>Tus resultados, informes y proyectos son tuyos: al vencer la licencia no se borra nada, solo deja de abrirse el programa hasta renovarla.</li>
+</ul>
+<div class="callout note"><span class="label">Nota</span><p>El texto completo del contrato de licencia está en Ayuda → Acerca de → Licencia.</p></div>
+</section>
+<section id="limits"><h2>Limitaciones y buenas prácticas</h2>
+<p>Conocer lo que el programa <i>no</i> garantiza es parte de usarlo bien.</p>
+
+<h3>Validación</h3>
+<ul>
+  <li>El cálculo se contrastó con Geopsy en <b>dos registros de un mismo sensor</b> (63 minutos, equipo ST3) usando exactamente los parámetros del .log de Geopsy: la curva coincide en toda la banda (correlación ≈ 0.999), con f0 dentro de ~0.2–2 % y A0 dentro de ~2–4 %. Queda un sesgo constante de ≈ 5 % (nuestra curva algo menor) <b>sin causa identificada</b>.</li>
+  <li>No se ha validado aún con otros instrumentos ni sitios. Para un proyecto nuevo, conviene contrastar al menos un registro con otro programa.</li>
+</ul>
+
+<h3>Sobre los parámetros y el método</h3>
+<ul>
+  <li>A0 y el veredicto de claridad SESAME dependen mucho del largo de ventana, el suavizado y el rechazo de ventanas. Con parámetros por defecto en lugar de los de Geopsy, A0 llegó a salir casi el doble en una prueba.</li>
+  <li>El rechazo STA/LTA promedia la razón dentro de cada ventana: con los mismos umbrales no tiene por qué descartar las mismas ventanas que Geopsy.</li>
+  <li>El suavizado de Parzen aproxima el suavizado de ancho constante de Geopsy.</li>
+  <li>El modo de campo difuso es una aproximación simplificada (no la formulación completa de funciones de Green) y «Directional energy» es una aproximación práctica al control de Geopsy.</li>
+  <li>Una sola medición es un resultado preliminar: la práctica recomienda varias mediciones por punto.</li>
+</ul>
+
+<h3>Sobre los datos</h3>
+<ul>
+  <li><b>Orden de canales (SEG-2):</b> un orden equivocado cambia el resultado sin avisar. Verifícalo siempre.</li>
+  <li><b>Respuesta del sensor:</b> por debajo de la frecuencia natural del geófono, los espectros caen y el H/V puede mostrar picos que no son del suelo. Indica la frecuencia natural del sensor si la conoces y revisa «Espectros por componente» y «Espectrogramas».</li>
+  <li><b>Fuentes locales:</b> la maquinaria o el tráfico regular crean picos estrechos que no son resonancias. Los espectrogramas ayudan a verlos.</li>
+  <li>SAC y GCF los abre ObsPy, pero no se verificaron con registros reales en este programa.</li>
+</ul>
+
+<h3>Sobre otros módulos</h3>
+<ul>
+  <li><b>Basamento / Vs</b>: modelo de ondas SH 1D, no de ondas Rayleigh; coeficientes generales de la literatura. Solo orientativo.</li>
+  <li><b>Mapas</b>: con pocos sitios, la interpolación es una ayuda visual.</li>
+  <li><b>E.030</b>: tablas transcritas; verifícalas con la norma vigente. El programa no determina el Vs30: lo ingresas tú.</li>
+  <li><b>Diagnóstico del pico</b>: indicativo, no concluyente.</li>
+</ul>
+
+<h3>Buenas prácticas</h3>
+<ol class="steps">
+  <li>Verifica el orden de canales de cada instrumento.</li>
+  <li>Usa el mismo conjunto de parámetros en todo el proyecto y regístralo.</li>
+  <li>Revisa los espectrogramas y los espectros por componente antes de aceptar un pico.</li>
+  <li>Contrasta al menos un registro con otro programa en proyectos nuevos o con instrumentos distintos.</li>
+  <li>Presenta los resultados como apoyo al criterio del profesional responsable.</li>
+</ol>
+</section>
+<section id="faq"><h2>Preguntas frecuentes</h2>
+<details><summary>Pulso «Aplicar banda» o «Elegir pico con clic» y no veo cambios</summary>
+<p>La curva nunca cambia: cambia cuál pico es el dominante (línea roja gruesa, tabla de picos, SESAME y E.030). Si el pico más alto ya estaba dentro de la banda, o el clic cayó dentro de ±12 % del pico actual, el resultado es el mismo. Para el modo de clic, desactiva antes el zoom y el desplazamiento de la barra de herramientas. Si aparece «Reprocesa el sitio», el sitio no tiene curvas por ventana (proyecto guardado con una versión anterior): pulsa <i>Procesar sitio activo</i>.</p></details>
+<details><summary>El registro de actividad dice «mapeo de canales NO VERIFICADO»</summary>
+<p>Es un aviso, no un error: el orden Z/N/E no se ha confirmado. Abre <i>Configurar mapeo de canales…</i>, confirma el orden con la ficha del instrumento y marca «He verificado».</p></details>
+<details><summary>El veredicto SESAME dice «NO CUMPLE» pero la curva se ve bien</summary>
+<p>Un pico real pero ancho o de amplitud baja (A0 &lt; 2) no cumple la claridad. Mira qué criterios fallan en la tabla (rojo), cuánto duró el registro (página 5) y si el largo de ventana es suficiente para el f0 que buscas.</p></details>
+<details><summary>Aparece un pico de alta frecuencia o varios picos pequeños</summary>
+<p>Suelen ser ruido local o del sensor. Revisa los espectrogramas (una línea horizontal brillante es una fuente de frecuencia fija) y acota la banda de búsqueda de f0 si corresponde.</p></details>
+<details><summary>Pego una tabla en Excel y 1.587 aparece como 1587 o como fecha</summary>
+<p>Tu Excel usa coma decimal. Haz clic derecho en la tabla y elige «Copiar toda la tabla (coma decimal, para Excel en español)».</p></details>
+<details><summary>Al abrir un proyecto sale un aviso de que no se encuentra el archivo de datos</summary>
+<p>El proyecto guarda los resultados pero no la señal original. Devuelve el archivo a la carpeta donde estaba (la ruta que indica el aviso) o reimporta el registro. Mientras tanto puedes ver y exportar los resultados guardados.</p></details>
+<details><summary>La memoria de Word no se genera</summary>
+<p>Comprueba que hayas ingresado Vs30 (mayor que 0) y la zona sísmica, y revisa el registro de actividad: el mensaje de error indica la causa.</p></details>
+<details><summary>El manual no se abre al pulsar F1</summary>
+<p>Abre manualmente <code>docs/manual/index.html</code>, en la carpeta de instalación del programa, con tu navegador. Si falta, reinstala el programa.</p></details>
+<details><summary>El programa es lento con registros largos</summary>
+<p>El procesamiento corre en segundo plano y la ventana sigue respondiendo. Los registros de más de una hora a alta frecuencia de muestreo tardan más; el análisis azimutal y los espectros por componente recorren todas las ventanas.</p></details>
+</section>
+<section id="about"><h2>Licencia, créditos y versión</h2>
+<p><b>pyhvsr-suite</b> versión 0.1.0<br>
+Desarrollado por <b>JLVSpectra Labs co.</b></p>
+
+<h3>Licencia</h3>
+<p>© 2026 JLVSpectra Labs co. Todos los derechos reservados. El uso del programa se rige por el contrato de licencia de usuario final (archivo <code>LICENSE.txt</code>, también visible en Ayuda → Acerca de → Licencia). Resumen: se licencia, no se vende; puedes usarlo, incluso con fines profesionales y comerciales, y los informes que generes son tuyos; no puedes copiarlo, redistribuirlo ni aplicar ingeniería inversa; se entrega sin garantía y el usuario es responsable de verificar los resultados.</p>
+
+<h3>Componentes de terceros</h3>
+<p>El programa usa bibliotecas de código abierto (ObsPy, NumPy, SciPy, Matplotlib, ReportLab, openpyxl, pyproj y otras) con sus propias licencias; están listadas en <code>THIRD_PARTY_NOTICES.txt</code>. Los nombres Geopsy, SESAME, SEG-2, SAF, MiniSEED, Tromino y E.030 pertenecen a sus titulares y se usan solo para indicar compatibilidad de formatos o referencia normativa; pyhvsr-suite no incluye código de Geopsy ni está afiliado a sus autores.</p>
+
+<h3>Referencias</h3>
+<ul>
+  <li>Nakamura, Y. (1989). A method for dynamic characteristics estimation of subsurface using microtremor on the ground surface. <i>QR of RTRI</i>, 30(1).</li>
+  <li>SESAME (2004). <i>Guidelines for the implementation of the H/V spectral ratio technique on ambient vibrations.</i></li>
+  <li>Konno, K. &amp; Ohmachi, T. (1998). Ground-motion characteristics estimated from spectral ratio between horizontal and vertical components of microtremor. <i>BSSA</i>, 88(1).</li>
+  <li>Cox, B. R., Cheng, T., Vantassel, J. P. &amp; Manuel, L. (2020). A statistical representation and frequency-domain window-rejection algorithm for single-station HVSR measurements. <i>Geophysical Journal International</i>, 221(3).</li>
+  <li>Ibs-von Seht, M. &amp; Wohlenberg, J. (1999). Microtremor measurements used to map thickness of soft sediments. <i>BSSA</i>, 89(1).</li>
+  <li>Norma Técnica E.030 «Diseño Sismorresistente» (edición 2026).</li>
+</ul>
+</section>
+<footer class="page-end">pyhvsr-suite · JLVSpectra Labs co. · Los resultados son un apoyo técnico: verifícalos antes de usarlos en decisiones de ingeniería. · v0.1.0</footer>
+</main>
+</div>
+<script src="manual.js"></script>
+</body>
+</html>

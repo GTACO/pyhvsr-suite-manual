@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pyhvsr-suite — User manual</title>
+<meta name="description" content="User manual of pyhvsr-suite: H/V (Nakamura) processing, SESAME criteria, E.030 classification and reports.">
+<link rel="icon" href="img/logo.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <button id="menu-toggle" class="menu-toggle" type="button" aria-label="Contents">☰ Contents</button>
+  <a class="brand" href="#intro"><img src="img/logo.png" alt=""><strong>pyhvsr-suite</strong><span>User manual</span></a>
+  <span class="spacer"></span>
+  <a class="btn" href="manual_es.html" data-lang-switch="es" lang="es">Español</a>
+  <button id="theme-toggle" type="button">Light / Dark</button>
+</header>
+<div class="layout">
+<aside class="toc">
+<input id="toc-search" type="search" placeholder="Search the manual…" aria-label="Search the manual…">
+<nav aria-label="toc">
+<div class="group">Getting started</div><ul>
+<li><a href="#intro">What is pyhvsr-suite</a></li>
+<li><a href="#quickstart">Quick start</a></li>
+<li><a href="#concepts">Key concepts</a></li>
+</ul>
+<div class="group">Program pages</div><ul>
+<li><a href="#p1">1. Project / Catalog</a></li>
+<li><a href="#p2">2. Signal / Windows</a></li>
+<li><a href="#p3">3. Parameters</a></li>
+<li><a href="#p4">4. H/V results</a></li>
+<li><a href="#p5">5. Temporal evolution of the HVSR</a></li>
+<li><a href="#p6">6. Spectra by component</a></li>
+<li><a href="#p7">7. Azimuthal analysis</a></li>
+<li><a href="#p8">8. Spatial analysis / Maps</a></li>
+<li><a href="#p9">9. Bedrock / Vs (optional)</a></li>
+<li><a href="#p10">10. Spectrograms (diagnostic)</a></li>
+</ul>
+<div class="group">Reference</div><ul>
+<li><a href="#files">Projects, formats and exports</a></li>
+<li><a href="#productivity">Copying, menus and shortcuts</a></li>
+<li><a href="#sesame">SESAME criteria</a></li>
+<li><a href="#e030">E.030 classification and memo</a></li>
+<li><a href="#license">License and activation</a></li>
+</ul>
+<div class="group">More information</div><ul>
+<li><a href="#limits">Limitations and good practice</a></li>
+<li><a href="#faq">FAQ</a></li>
+<li><a href="#about">License, credits and version</a></li>
+</ul>
+</nav>
+</aside>
+<main>
+<section id="intro">
+<div class="hero">
+  <p class="meta">User manual · version 0.1.0</p>
+  <h1>pyhvsr-suite</h1>
+  <p class="lead">Horizontal-to-vertical spectral ratio (H/V, Nakamura method) processing for seismic site characterization, with SESAME criteria, site classification under the E.030 code and ready-to-deliver reports.</p>
+  <div class="facts">
+    <div class="fact"><b>f0 · T0 · A0</b><span>peak frequency, period and amplitude</span></div>
+    <div class="fact"><b>SESAME 2004</b><span>9 reliability and clarity criteria</span></div>
+    <div class="fact"><b>E.030</b><span>site classification and Word memo</span></div>
+    <div class="fact"><b>Works offline</b><span>everything is computed on your computer</span></div>
+  </div>
+</div>
+
+<p>pyhvsr-suite reads three-component ambient-vibration records (vertical Z and horizontals N and E), computes the H/V curve of every time window, averages them and detects the main peak. From that peak it gives the site's predominant frequency (f0), its period (T0 = 1/f0) and its amplitude (A0), assesses measurement quality with the SESAME (2004) criteria and, if you enter Vs30 and the seismic zone, classifies the site under the Peruvian E.030 code.</p>
+
+<h3>What it includes</h3>
+<ul>
+  <li>Reading of SEG-2, SAF (SESAME/Tromino) and MiniSEED, with a verifiable channel mapping.</li>
+  <li>Window selection with manual and automatic rejection (bad samples, STA/LTA, outliers).</li>
+  <li>H/V with Konno-Ohmachi or Parzen smoothing and several horizontal-combination methods.</li>
+  <li>Diagnostics: temporal evolution, per-component spectra, spectrograms and azimuthal analysis.</li>
+  <li>Multi-site maps (f0, T0, amplitude) clipped to a study-area polygon.</li>
+  <li>Indicative bedrock-depth and Vs-profile estimation.</li>
+  <li>Export to Geopsy format (.hv), Excel and CSV; comparison with a Geopsy curve.</li>
+  <li>PDF reports (classic, detailed and consolidated) and an E.030 calculation memo in Word.</li>
+</ul>
+
+<div class="callout warn"><span class="label">Caution</span><p>The results are technical support and depend on the data and on the parameters you choose. They do not replace the judgment of a qualified professional. Read the “Limitations” section before using them in engineering decisions.</p></div>
+</section>
+<section id="quickstart"><h2>Quick start</h2>
+<p>From a field file to a report, in eight steps:</p>
+<ol class="steps">
+  <li><b>Add the record.</b>
+      In “1. Proyecto / Catálogo” press <i>Agregar archivo(s)…</i> (or drag the file in). For SEG-2 open <i>Configurar mapeo de canales…</i>, say which channel is Z, N and E and tick “He verificado que este orden es correcto”.</li>
+  <li><b>Check the signal and the windows.</b>
+      In “2. Señal / Ventanas” press <i>Generar ventanas</i>. Green ones are used; red ones are discarded. You can apply automatic rejection or click a window to accept or reject it.</li>
+  <li><b>Choose the parameters.</b>
+      In “3. Parámetros” the defaults are fine to start with. The most influential settings are the window length, the smoothing and window rejection.</li>
+  <li><b>Process.</b>
+      In “4. Resultados H/V” press <i>Procesar sitio activo</i>. You will see the curve, the peaks and the SESAME verdict.</li>
+  <li><b>Validate the peak.</b>
+      If the automatic peak is not the one you want, limit the band or click on the curve. Check “6. Espectros por componente” to see where it comes from.</li>
+  <li><b>Add the E.030 classification.</b>
+      On the same page enter Vs30, seismic zone and building category and generate the calculation memo (Word).</li>
+  <li><b>Export.</b>
+      <i>Exportar resultados</i> (.hv / Excel / CSV), <i>Exportar gráfico</i> and <i>Generar reporte PDF…</i>.</li>
+  <li><b>Save the project.</b>
+      <kbd>Ctrl</kbd>+<kbd>S</kbd> saves everything that was processed; when you reopen it, everything is as you left it, with no reprocessing.</li>
+</ol>
+<figure><img src="img/05_resultados.png" alt="“4. Resultados H/V” page after processing a 60-minute record (San Cristóbal, sample data): mean curve with its ±σ band, peak table and SESAME criteria." loading="lazy"><figcaption>“4. Resultados H/V” page after processing a 60-minute record (San Cristóbal, sample data): mean curve with its ±σ band, peak table and SESAME criteria.</figcaption></figure>
+<div class="callout tip"><span class="label">Tip</span><p>Hover over buttons and fields: many have a short help text. Every page scrolls with the mouse wheel.</p></div>
+</section>
+<section id="concepts"><h2>Key concepts</h2>
+<h3>What H/V measures</h3>
+<p>The Nakamura method divides the spectrum of the horizontal components by that of the vertical one, at each frequency. Over soft soil resting on much stiffer material, that ratio usually shows a peak whose frequency (f0) is associated with the deposit's resonance. It does not measure wave velocity directly: the peak reports the impedance contrast and, with other data, lets you estimate thicknesses.</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Symbol</th><th>Meaning</th></tr></thead>
+  <tbody>
+    <tr><td><b>f0</b></td><td>Frequency of the main peak of the mean H/V curve (Hz).</td></tr>
+    <tr><td><b>T0</b></td><td>Fundamental period, T0 = 1/f0 (s). In the E.030 code it is called Ts.</td></tr>
+    <tr><td><b>A0</b></td><td>H/V amplitude at the peak.</td></tr>
+    <tr><td><b>±σ</b></td><td>Window-to-window variability. The shaded band of the curve is the mean ±σ.</td></tr>
+    <tr><td><b>Window</b></td><td>Stretch of the record (e.g. 30 or 60 s) used to compute one individual H/V curve.</td></tr>
+    <tr><td><b>Vs30</b></td><td>Average shear-wave velocity in the upper 30 m. You enter it; the program does not compute it.</td></tr>
+    <tr><td><b>SESAME</b></td><td>European guideline (2004) with criteria to judge whether the curve is reliable and the peak is clear.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>The processing flow</h3>
+<p>Record → detrend (and optional high-pass filter) → windows → rejection of bad windows → taper and FFT of each component → smoothing → combination of the two horizontals → H/V ratio per window → stacking (log-normal mean by default) → peak detection → SESAME criteria.</p>
+<div class="callout note"><span class="label">Note</span><p>A high peak is not always a soil resonance: it can also come from machinery, from the sensor or from broadband noise. That is why the program includes diagnostic pages (per-component spectra, spectrograms, temporal evolution).</p></div>
+</section>
+<section id="p1"><h2>1. Project / Catalog</h2>
+<p>This is where the project is built: you add records, assign the channel order and enter each site's metadata.</p>
+<figure><img src="img/02_catalogo.png" alt="Catalog with a processed site: the f0 column fills in after processing. On the right, the metadata of the selected site; the activity log is below." loading="lazy"><figcaption>Catalog with a processed site: the f0 column fills in after processing. On the right, the metadata of the selected site; the activity log is below.</figcaption></figure>
+
+<h3>Input formats</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Format</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td><b>SEG-2</b> (.sg2, .seg2)</td><td>It does not say which channel is Z, N or E: you must assign it (see below).</td></tr>
+    <tr><td><b>SAF</b> (.saf)</td><td>SESAME ASCII format. It declares each column's component, so it is assigned automatically and marked as verified.</td></tr>
+    <tr><td><b>MiniSEED</b> (.mseed, .miniseed)</td><td>If each component is in its own file, select all three together: they are grouped by station and the component comes from the channel code (BHZ, EHN…). Gaps are filled with zeros so they remain visible.</td></tr>
+    <tr><td>SAC, GCF</td><td>ObsPy can open them, but they have not been verified with real records in this program.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Channel mapping (SEG-2)</h3>
+<p>A mistake here changes the whole result without any warning. Open <i>Configurar mapeo de canales…</i> and enter the channel number (starting at 0) of each component:</p>
+<figure class="narrow"><img src="img/20_dialogo_mapeo_canales.png" alt="Channel-mapping dialog with the MAE STnet (ST3) order of the sample data: channel 0 = Z, channel 2 = N, channel 1 = E." loading="lazy"><figcaption>Channel-mapping dialog with the MAE STnet (ST3) order of the sample data: channel 0 = Z, channel 2 = N, channel 1 = E.</figcaption></figure>
+<div class="callout warn"><span class="label">Caution</span><p>There is no universal order: it depends on the instrument and how it was set up. Confirm it with the instrument's datasheet or a known test. Until you tick “He verificado”, the site is shown as “unverified” and the activity log warns about it.</p></div>
+
+<h3>Metadata and coordinates</h3>
+<p>With the site selected you can edit name, latitude, longitude, elevation and notes. <i>Cargar coordenadas desde KMZ…</i> takes the point from a Google Earth file. Coordinates are needed for the spatial analysis (page 8).</p>
+<figure><img src="img/02b_catalogo_multisitio.png" alt="A project with three sites (HVSR-01 to HVSR-03, sample data) with their coordinates loaded." loading="lazy"><figcaption>A project with three sites (HVSR-01 to HVSR-03, sample data) with their coordinates loaded.</figcaption></figure>
+
+<h3>Buttons</h3>
+<ul>
+  <li><b>Agregar archivo(s)…</b> — imports one or more records (you can also drag them onto the window).</li>
+  <li><b>Quitar sitio</b> — removes the selected site from the project (it does not delete the original file).</li>
+  <li><b>Guardar proyecto / Guardar como… / Abrir proyecto…</b> — see “Projects, formats and exports”.</li>
+  <li><b>Procesar todos los sitios del proyecto</b> — batch-processes with each site's parameters. If some sites have an unverified mapping, it asks for confirmation.</li>
+</ul>
+</section>
+<section id="p2"><h2>2. Signal / Windows</h2>
+<p>It shows the three traces (Z, N, E) with the analysis windows over them. It helps you decide which parts of the record are used.</p>
+<figure><img src="img/03_senal_ventanas.png" alt="60-minute record with its 60 s windows: green = used, red = rejected (here by amplitude outlier)." loading="lazy"><figcaption>60-minute record with its 60 s windows: green = used, red = rejected (here by amplitude outlier).</figcaption></figure>
+<ul>
+  <li><b>Generar ventanas</b> — splits the record according to the length and overlap on page 3.</li>
+  <li><b>Aplicar rechazo STA/LTA</b> — discards windows with transients (knocks, footsteps, nearby vehicles) by comparing short- and long-term energy.</li>
+  <li><b>Aplicar rechazo por outlier de amplitud</b> — discards windows whose amplitude is far from the rest.</li>
+  <li><b>Restaurar todas (válidas)</b> — marks all windows as valid again.</li>
+  <li><b>Clicking a window</b> accepts or rejects it by hand.</li>
+</ul>
+<div class="callout note"><span class="label">Note</span><p>Bad samples (non-finite values, flat runs, saturation) and the Cox et al. (2020) criterion are applied automatically when processing, according to what you enable on page 3; they need no button here.</p></div>
+<div class="callout tip"><span class="label">Tip</span><p>Before rejecting blindly, look at the spectrogram (page 10): a transient shows as a vertical band and a fixed-frequency source as a horizontal line.</p></div>
+</section>
+<section id="p3"><h2>3. Parameters</h2>
+<p>Parameters are stored per site. With <i>Aplicar esta configuración a todos los sitios del proyecto</i> you copy them to the other sites (each site keeps its chosen peak).</p>
+<figure><img src="img/04_parametros.png" alt="Parameters page (top): windowing, smoothing, taper, high-pass filter, horizontal combination and processing mode." loading="lazy"><figcaption>Parameters page (top): windowing, smoothing, taper, high-pass filter, horizontal combination and processing mode.</figcaption></figure>
+<figure><img src="img/04b_parametros_final.png" alt="Bottom: automatic window rejection and stacking." loading="lazy"><figcaption>Bottom: automatic window rejection and stacking.</figcaption></figure>
+<div class="table-wrap"><table>
+  <thead><tr><th>Group</th><th>What it controls</th></tr></thead>
+  <tbody>
+    <tr><td><b>Ventaneo</b></td><td>Length of each window (30 s by default) and overlap. SESAME asks for windows of at least 10/f0 s and enough cycles: for low f0 use long windows.</td></tr>
+    <tr><td><b>Smoothing</b></td><td>Spectral method (FAS recommended, or Welch), Konno-Ohmachi smoothing (b = 40 by default) or Parzen, output band (0.5–50 Hz by default) and number of points (300).</td></tr>
+    <tr><td><b>Tapering</b></td><td>Edge-tapering window: Tukey (10 % per side by default), Hann or Hamming.</td></tr>
+    <tr><td><b>High-pass filter</b></td><td>Optional (off by default): cut-off frequency and Butterworth order.</td></tr>
+    <tr><td><b>Horizontal-component combination</b></td><td>How N and E are joined: arithmetic, geometric (default) or quadratic (“squared average”) mean, total horizontal energy, vector summation, maximum, RotD50, single azimuth or “Directional energy” (an approximation of Geopsy's control).</td></tr>
+    <tr><td><b>Processing mode</b></td><td>Traditional (default) or diffuse field (simplified approximation). The “Azimutal” option does not change the H/V: the sweep is computed on page 7 and only its step is set here.</td></tr>
+    <tr><td><b>Automatic window rejection</b></td><td>Bad samples (on by default), STA/LTA, amplitude outlier and Cox et al. (2020) in the frequency domain.</td></tr>
+    <tr><td><b>Stacking</b></td><td>How the window curves are averaged: log-normal mean (recommended, SESAME standard), arithmetic or median.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Shortcuts to get started</h3>
+<ul>
+  <li><b>Preajuste genérico estilo Geopsy</b> — starting point: “squared average” combination, Konno-Ohmachi 40, no high-pass and no automatic rejection.</li>
+  <li><b>Importar parámetros desde un .log de Geopsy…</b> — reads the .log Geopsy writes next to each .hv and copies window length and overlap, taper, smoothing, frequency grid, horizontal combination and anti-trigger. When done it lists what was approximated or has no equivalent.</li>
+</ul>
+<div class="callout warn"><span class="label">Caution</span><p>The A0 value and the SESAME clarity verdict change quite a lot with window length, smoothing and rejection. Use the same parameter set for all the sites of a project and record it in your report.</p></div>
+</section>
+<section id="p4"><h2>4. H/V results</h2>
+<p>This is the central page: it processes the active site and brings together the H/V curve, the peaks, the SESAME verdict and the E.030 classification.</p>
+
+<h3>The curve</h3>
+<figure><img src="img/05b_resultados_sin_curvas.png" alt="With “Mostrar curvas individuales” unticked only the mean curve and its ±σ band are shown." loading="lazy"><figcaption>With “Mostrar curvas individuales” unticked only the mean curve and its ±σ band are shown.</figcaption></figure>
+<div class="table-wrap"><table>
+  <thead><tr><th>Plot element</th><th>What it is</th></tr></thead>
+  <tbody>
+    <tr><td>Thick black line</td><td>Mean (stacked) H/V curve.</td></tr>
+    <tr><td>Dashed black lines</td><td>Mean ±σ.</td></tr>
+    <tr><td>Coloured curves</td><td>Each window's curve (they can be hidden with the checkbox).</td></tr>
+    <tr><td>Thick red dotted line + grey band</td><td>f0 of the average: the frequency of the mean curve's maximum. The band is ±1σ of the peak frequency across windows. It is the f0 used by SESAME, E.030 and the reports.</td></tr>
+    <tr><td>Thin red lines</td><td>Secondary peaks of the mean curve (up to five).</td></tr>
+    <tr><td>Dashed blue line + blue band</td><td>f0 from windows: geometric mean of each window's peak near f0, with its ±1σ. It is the second estimator Geopsy reports. If it matches the red one the peak is stable; if they are far apart it is broad or unstable.</td></tr>
+    <tr><td>Dotted orange line</td><td>f0 of a Geopsy .hv, if you overlay one.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Peak table and SESAME criteria</h3>
+<figure><img src="img/05c_resultados_tablas.png" alt="Bottom of the page: peak table (the dominant one highlighted in black bold) and SESAME criteria in green (met) and red (not met)." loading="lazy"><figcaption>Bottom of the page: peak table (the dominant one highlighted in black bold) and SESAME criteria in green (met) and red (not met).</figcaption></figure>
+<ul>
+  <li>The <b>first row</b> is the dominant peak and is highlighted. The columns are f0, its ±σ, the period T0 = 1/f0, the amplitude and its ±σ.</li>
+  <li>Under the verdict (“CUMPLE” / “NO CUMPLE”) are the 3 reliability and the 6 clarity criteria. The overall verdict requires full reliability and at least 5 of the 6 clarity criteria. See “SESAME criteria”.</li>
+</ul>
+
+<h3>Choosing another peak</h3>
+<p>The automatic peak is the curve's maximum. If it is not the one you want, the “Pico f0 y comparación con Geopsy” group offers:</p>
+<ol class="steps">
+  <li><b>By band.</b> Type “Buscar f0 entre … y …” and press <i>Aplicar banda</i> (changing the numbers alone does nothing). The highest peak within the band is searched; “(libre)” means no limit. To see a change, the band must exclude the current peak.</li>
+  <li><b>With a click.</b> Press <i>Elegir pico con clic</i> and click on the curve. The peak becomes the mean curve's maximum within ±12 % of the click's frequency. First switch off the plot toolbar's zoom and pan, or the click is ignored. If that maximum was already the main peak you will see no change.</li>
+  <li><b>Back to automatic.</b> <i>Pico automático</i> removes the band and the manual peak.</li>
+</ol>
+<p>In all three cases SESAME and E.030 are recomputed without reprocessing the signal; the curve does not change, only which peak is the dominant one.</p>
+
+<h3>Comparing with Geopsy</h3>
+<p><i>Superponer .hv de Geopsy…</i> draws in orange the curve of a Geopsy .hv file and shows the differences in f0, A0 and curve shape. <i>Quitar superposición</i> removes it.</p>
+
+<h3>E.030 classification</h3>
+<p>Enter Vs30, its source, the seismic zone (Z1–Z4) and the building category (A–D) and press <i>Generar memoria de cálculo (Word)…</i>. Details in “E.030 classification and memo”.</p>
+
+<h3>Top buttons</h3>
+<ul>
+  <li><b>Procesar sitio activo</b> — computes the active site's H/V in the background; the window stays responsive.</li>
+  <li><b>Exportar resultados (HV/Excel/CSV)…</b>, <b>Exportar gráfico (PNG/SVG/PDF)…</b>, <b>Generar reporte PDF…</b> — see “Projects, formats and exports”.</li>
+</ul>
+</section>
+<section id="p5"><h2>5. Temporal evolution of the HVSR</h2>
+<p>It answers a practical question: was the record long enough for the curve to stabilize? For each window over time it shows the H/V (2D on top, 3D surface below).</p>
+<figure><img src="img/06_evolucion_temporal.png" alt="Three views: each window&#x27;s HVSR, the cumulative HVSR and the cumulative standard deviation, each in 2D and 3D." loading="lazy"><figcaption>Three views: each window's HVSR, the cumulative HVSR and the cumulative standard deviation, each in 2D and 3D.</figcaption></figure>
+<ul>
+  <li><b>Temporal HVSR (per window)</b> — each window's curve; constant vertical bands indicate a stable peak.</li>
+  <li><b>Cumulative HVSR</b> — the average up to each instant; if the bands stop moving, adding more time no longer changes the curve.</li>
+  <li><b>Cumulative standard deviation</b> — it should fall and settle; if it stays high, the measurement is short or noisy.</li>
+</ul>
+<div class="callout note"><span class="label">Note</span><p>The 3D plots can be rotated with the mouse. At least two valid windows are needed.</p></div>
+</section>
+<section id="p6"><h2>6. Spectra by component</h2>
+<p>It is equivalent to Geopsy's “Spectrum” tool. It shows the average spectrum of Z, N, E and of the combined horizontal (H), with the H/V below on the same frequency axis, plus a diagnosis of the peak's origin.</p>
+<figure><img src="img/07_espectros_componente.png" alt="Top, spectra of Z (red), N (green), E (blue) and H (dashed black) with their ±σ band; bottom, the H/V with f0 and the flanks f0/2 and 2·f0." loading="lazy"><figcaption>Top, spectra of Z (red), N (green), E (blue) and H (dashed black) with their ±σ band; bottom, the H/V with f0 and the flanks f0/2 and 2·f0.</figcaption></figure>
+<p>Press <i>Calcular espectros del sitio activo</i> (after processing). <i>Exportar espectros (CSV)…</i> saves the data.</p>
+<h3>How to read the diagnosis</h3>
+<p>The program compares each spectrum at f0 with its flanks (f0/2 and 2·f0). A maximum in H or a minimum in V only counts if it is <i>local</i>:</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Result</th><th>Meaning</th></tr></thead>
+  <tbody>
+    <tr><td><b>H</b></td><td>H has a local maximum at f0 and V has no minimum: the peak comes from the horizontals (the closest to a resonance).</td></tr>
+    <tr><td><b>V</b></td><td>V has a local minimum at f0: the peak comes from a trough in the vertical.</td></tr>
+    <tr><td><b>mixed</b></td><td>Both contribute.</td></tr>
+    <tr><td><b>slopes</b></td><td>The H/V has a local maximum, but neither H nor V has a local feature: it arises from the difference in slopes between the two spectra (typical of the sensor's response or broadband noise). It is unlikely to be a clear soil resonance.</td></tr>
+    <tr><td><b>no peak</b></td><td>The H/V does not stand out from its flanks.</td></tr>
+  </tbody>
+</table></div>
+<p>It also warns if <b>all three</b> components rise together at f0: it may be a monochromatic source (machinery, regular traffic) rather than the soil.</p>
+<div class="callout warn"><span class="label">Caution</span><p>The diagnosis is indicative: a single record and a pair of flanks do not replace the specialist's judgment.</p></div>
+</section>
+<section id="p7"><h2>7. Azimuthal analysis</h2>
+<p>It computes the H/V while rotating the horizontal component from 0° to 180° to detect directional anisotropy at the site (for example from topography or faults).</p>
+<figure><img src="img/08_azimutal.png" alt="Left, the H/V peak amplitude by azimuth; right, its frequency. A nearly circular amplitude indicates a roughly isotropic site." loading="lazy"><figcaption>Left, the H/V peak amplitude by azimuth; right, its frequency. A nearly circular amplitude indicates a roughly isotropic site.</figcaption></figure>
+<ul>
+  <li>Press <i>Calcular barrido azimutal</i> (the step, in degrees, is set on page 3).</li>
+  <li>The text line gives the <b>anisotropy ratio</b> (maximum / minimum amplitude) and the azimuth of maximum amplitude. Above a threshold it reports “anisotropía direccional significativa”; otherwise “aproximadamente isotrópico”.</li>
+</ul>
+</section>
+<section id="p8"><h2>8. Spatial analysis / Maps</h2>
+<p>It gathers several sites with coordinates to see how f0, T0 or amplitude vary across the area. It needs at least two sites with latitude and longitude (load them from KMZ on page 1).</p>
+<figure><img src="img/12_espacial_sitios.png" alt="Site map (sample data, HVSR 3 folder), coloured by f0, with the study-area polygon." loading="lazy"><figcaption>Site map (sample data, HVSR 3 folder), coloured by f0, with the study-area polygon.</figcaption></figure>
+<figure><img src="img/12b_espacial_f0.png" alt="f0 iso-frequency map, interpolated and clipped to the polygon. The white lines are contours." loading="lazy"><figcaption>f0 iso-frequency map, interpolated and clipped to the polygon. The white lines are contours.</figcaption></figure>
+<ul>
+  <li><b>Vista</b> — site map, iso-frequency (f0), iso-period (T0), amplitude or profile section (virtual soundings). Click a site on the map to select it.</li>
+  <li><b>Colorear sitios por</b> — f0 or similarity to a reference site (cross-correlation or LCSS).</li>
+  <li><b>Cargar polígono de límite (KMZ)…</b> / <b>Quitar polígono</b> — clips the maps to the study area.</li>
+  <li><b>Actualizar lista de sitios</b> — refreshes the list after adding or processing sites.</li>
+</ul>
+<div class="callout note"><span class="label">Note</span><p>Interpolation is IDW (always available). Kriging is only available if the optional PyKrige library is installed; the screen says so.</p></div>
+<div class="callout warn"><span class="label">Caution</span><p>With few sites the interpolated map is a visual aid, not a measurement between the points.</p></div>
+</section>
+<section id="p9"><h2>9. Bedrock / Vs (optional)</h2>
+<p>Optional, indicative module: it estimates bedrock depth from f0 and fits a simple Vs profile. It is meant to support, not replace, an MASW or refraction survey.</p>
+<figure><img src="img/10_basamento_vs.png" alt="Empirical f0 → depth relation (Ibs-von Seht and Wohlenberg power law) and one-layer inversion with the results table." loading="lazy"><figcaption>Empirical f0 → depth relation (Ibs-von Seht and Wohlenberg power law) and one-layer inversion with the results table.</figcaption></figure>
+<ul>
+  <li><b>Empirical relation</b> — h = a·f0<sup>b</sup> (power law, with general literature coefficients) or quarter-wavelength with the mean Vs you assume. Press <i>Calcular</i>.</li>
+  <li><b>Inversion (Thomson-Haskell)</b> — one layer (closed form) or two layers (grid search). You set Vs and thickness ranges, densities and grid resolution; <i>Ejecutar inversión</i> returns the profile and draws the theoretical curve over the observed one.</li>
+</ul>
+<figure><img src="img/10b_basamento_vs_grafico.png" alt="Bottom of the page: observed H/V against the theoretical SH transfer function." loading="lazy"><figcaption>Bottom of the page: observed H/V against the theoretical SH transfer function.</figcaption></figure>
+<div class="callout warn"><span class="label">Caution</span><p>The model assumes vertically incident shear waves (classic 1D site response), not the Rayleigh-wave ellipticity that rigorously explains the H/V peak in ambient noise. Treat the result as a preliminary estimate and calibrate the coefficients with local data (SPT, refraction) before using it.</p></div>
+</section>
+<section id="p10"><h2>10. Spectrograms (diagnostic)</h2>
+<p>It shows the spectrogram of each trace (Z, N, E) of the whole record, apart from the processing flow: it does not modify windows or results. It is for inspecting the record.</p>
+<figure><img src="img/11_espectrogramas.png" alt="Spectrograms of San Cristóbal (60 min, 0–50 Hz): periodic vertical bands (transients) and a horizontal line near 9.5 Hz between ~2000 and ~2290 s (fixed-frequency source)." loading="lazy"><figcaption>Spectrograms of San Cristóbal (60 min, 0–50 Hz): periodic vertical bands (transients) and a horizontal line near 9.5 Hz between ~2000 and ~2290 s (fixed-frequency source).</figcaption></figure>
+<div class="table-wrap"><table>
+  <thead><tr><th>Control</th><th>Effect</th></tr></thead>
+  <tbody>
+    <tr><td><b>Segmento</b></td><td>Duration of each FFT. Frequency resolution is 1/segment (8 s → 0.125 Hz). Longer separates frequencies better; shorter follows changes in time better. Changing it requires recomputing.</td></tr>
+    <tr><td><b>Frecuencia máx.</b></td><td>Displayed upper limit (only redraws).</td></tr>
+    <tr><td><b>Eje</b></td><td>Linear or logarithmic; logarithmic emphasizes the low band (< 5 Hz).</td></tr>
+    <tr><td><b>Marcar ventanas rechazadas</b></td><td>Shades discarded windows in red.</td></tr>
+  </tbody>
+</table></div>
+<figure><img src="img/11b_espectrogramas_log.png" alt="Same view with a logarithmic frequency axis: below ~2 Hz the energy falls in all three components." loading="lazy"><figcaption>Same view with a logarithmic frequency axis: below ~2 Hz the energy falls in all three components.</figcaption></figure>
+<p>Colour is relative power in dB, with a common scale for the three components (5th–99.5th percentiles of all values). A <b>bright horizontal line</b> indicates a fixed-frequency source (machinery, regular traffic); a <b>vertical band</b>, a transient (footstep, knock, vehicle).</p>
+<div class="callout tip"><span class="label">Tip</span><p>If the energy drops sharply below a certain frequency in all three components, the sensor probably cannot see that band (the geophone's natural frequency). An H/V peak there should be treated with caution.</p></div>
+</section>
+<section id="files"><h2>Projects, formats and exports</h2>
+<h3>Project (.hvsrproj)</h3>
+<p><b>Guardar proyecto</b> (<kbd>Ctrl</kbd>+<kbd>S</kbd>) writes a single file with everything processed: sites, parameters, windows, results and peaks, plus the per-window curves, the per-component spectra and the azimuthal sweep, the active site and the page you were on, and the report template. <b>Guardar como…</b> (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd>) picks another path. When you open the project everything is as you left it, <b>with no reprocessing</b>.</p>
+<ul>
+  <li>Waveforms are <b>not</b> saved: they are re-read from the original files, which must remain in their folder. If one is missing you are warned on opening and the saved results are kept (without the signal or the ability to reprocess).</li>
+  <li>Spectrograms are not saved either; they are recomputed in a couple of seconds.</li>
+  <li>Projects from earlier versions (plain JSON) still open; they lack the per-window curves until you reprocess.</li>
+  <li>The file is written to a temporary one first and then replaces the old one: a failure mid-save does not corrupt an existing project.</li>
+</ul>
+
+<h3>Exporting results</h3>
+<p><i>Exportar resultados (HV/Excel/CSV)…</i> picks the format from the filter or the extension:</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Format</th><th>Content</th></tr></thead>
+  <tbody>
+    <tr><td><b>.hv</b> (Geopsy)</td><td>Same header and columns as Geopsy (frequency, average, minimum, maximum), with f0 from the average, f0 from windows and number of windows; it also writes a <b>.log</b> with the parameters.</td></tr>
+    <tr><td><b>Excel</b> (.xlsx)</td><td>Sheets Resumen, Curva HVSR (with chart), Picos, SESAME, Ventanas and Curvas por ventana.</td></tr>
+    <tr><td><b>CSV</b></td><td>The H/V curve: frequency, average, minimum, maximum, standard deviation of the logarithm and 10th and 90th percentiles.</td></tr>
+  </tbody>
+</table></div>
+<p><i>Exportar gráfico (PNG/SVG/PDF)…</i> saves the plot as you see it (if you hid the individual curves, they stay hidden). Right-clicking any plot lets you copy it or save it as a 300 dpi PNG.</p>
+
+<h3>PDF reports</h3>
+<p><i>Generar reporte PDF…</i> opens the template dialog (company, project, optional logo, footer and format).</p>
+<figure class="narrow"><img src="img/21_dialogo_plantilla_reporte.png" alt="Report template dialog." loading="lazy"><figcaption>Report template dialog.</figcaption></figure>
+<ul>
+  <li><b>Classic</b> — one page with the field record, the curve with its peak, the results box (Vs30, classification, f0, T0, A0) and the SESAME check, plus the temporal-evolution page and the E.030 annex.</li>
+  <li><b>Detailed</b> — numbered sections: site data, parameters, curve, peaks, SESAME criteria, E.030 and temporal evolution.</li>
+  <li><b>Consolidated</b> — from the Proyecto menu → <i>Generar reporte consolidado (PDF)…</i>: one document with all the processed sites.</li>
+</ul>
+<figure><img src="img/30_informe_clasico.png" alt="One-page classic report (sample data)." loading="lazy"><figcaption>One-page classic report (sample data).</figcaption></figure>
+<figure><img src="img/32_informe_detallado_p1.png" alt="First page of the detailed report." loading="lazy"><figcaption>First page of the detailed report.</figcaption></figure>
+<figure><img src="img/31_informe_clasico_temporal.png" alt="Temporal-evolution page included in the report." loading="lazy"><figcaption>Temporal-evolution page included in the report.</figcaption></figure>
+</section>
+<section id="productivity"><h2>Copying, menus and shortcuts</h2>
+<h3>Copying tables to Excel</h3>
+<p>In any table (peaks, SESAME criteria, catalog, profile layers) click and press <kbd>Ctrl</kbd>+<kbd>C</kbd>: the selection —or the whole table if nothing is selected— is copied <b>with its headers</b>, tab-separated, ready to paste into Excel with <kbd>Ctrl</kbd>+<kbd>V</kbd>.</p>
+<figure class="narrow"><img src="img/24_menu_clic_derecho_tabla.png" alt="Right-click menu of a table." loading="lazy"><figcaption>Right-click menu of a table.</figcaption></figure>
+<p>Right-click also offers copying the whole table and a <b>decimal-comma</b> variant: if your Excel uses a decimal comma (typical in Spanish), <code>1.587</code> could be read as 1587 or as a date; with that option <code>1,587</code> is copied.</p>
+
+<h3>Copying or saving a plot</h3>
+<p>Right-click any plot: <i>Copiar imagen al portapapeles</i> or <i>Guardar como PNG (300 dpi)…</i>. The plot's toolbar also offers zoom, pan and saving.</p>
+<figure class="narrow"><img src="img/25_menu_clic_derecho_grafico.png" alt="Right-click menu of a plot." loading="lazy"><figcaption>Right-click menu of a plot.</figcaption></figure>
+
+<h3>Menus and shortcuts</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Shortcut</th><th>Action</th></tr></thead>
+  <tbody>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>N</kbd></td><td>New project</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>O</kbd></td><td>Open project</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>S</kbd></td><td>Save project (asks for the path only the first time)</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd></td><td>Save project as…</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>C</kbd></td><td>Copy the selected table (with headers)</td></tr>
+    <tr><td><kbd>F1</kbd></td><td>Open this manual</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>Q</kbd></td><td>Quit</td></tr>
+  </tbody>
+</table></div>
+<p><b>Apariencia</b> menu: Claro (light) and Oscuro (dark) themes and, under “Otros recomendados”, Azul profesional and Alto contraste (your choice is remembered). <b>Ventana</b> menu: show or hide the activity log and reset the layout.</p>
+<figure class="narrow"><img src="img/23_menu_proyecto.png" alt="Proyecto menu." loading="lazy"><figcaption>Proyecto menu.</figcaption></figure>
+<figure><img src="img/26_tema_oscuro_resultados.png" alt="The Oscuro (dark) theme on the results page." loading="lazy"><figcaption>The Oscuro (dark) theme on the results page.</figcaption></figure>
+</section>
+<section id="sesame"><h2>SESAME criteria</h2>
+<p>The SESAME (2004) criteria assess two things: whether the <b>curve is reliable</b> and whether the <b>peak is clear</b>. In the table on page 4 each criterion is shown in green (met) or red (not met) with its detail.</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Group</th><th>Criterion</th><th>What it checks</th></tr></thead>
+  <tbody>
+    <tr><td rowspan="3"><span class="pill">Reliability</span></td><td><code>f0 &gt; 10 / Lw</code></td><td>The window is long enough to see several cycles of f0.</td></tr>
+    <tr><td><code>nc(f0) = Lw·nw·f0 &gt; 200</code></td><td>There are enough significant cycles in total (length × number of windows × f0).</td></tr>
+    <tr><td><code>σA(f) &lt; 2</code> (or 3 if f0 &lt; 0.5 Hz) in [f0/4, 4f0]</td><td>The window-to-window scatter of the curve is low near the peak.</td></tr>
+    <tr><td rowspan="6"><span class="pill">Clarity</span></td><td><code>exists f−</code> in [f0/4, f0] with <code>A(f−) &lt; A0/2</code></td><td>The curve falls to half below the peak.</td></tr>
+    <tr><td><code>exists f+</code> in [f0, 4f0] with <code>A(f+) &lt; A0/2</code></td><td>The curve falls to half above the peak.</td></tr>
+    <tr><td><code>A0 &gt; 2</code></td><td>The peak has enough amplitude.</td></tr>
+    <tr><td><code>|f<sub>pico</sub>[A<sub>media</sub> ± σ] − f0| &lt; ε(f0)</code></td><td>The peak of the mean ±σ curves lies close to f0.</td></tr>
+    <tr><td><code>σf(f0) &lt; ε(f0)</code></td><td>The peak frequency is stable across windows.</td></tr>
+    <tr><td><code>σ<sub>log10</sub> H/V(f0) &lt; θ(f0)</code></td><td>The peak amplitude is stable across windows.</td></tr>
+  </tbody>
+</table></div>
+<p>The overall verdict is <b>CUMPLE</b> (met) if all 3 reliability criteria and at least 5 of the 6 clarity criteria are met. ε(f0) and θ(f0) are thresholds that depend on the f0 range, taken from the SESAME guideline.</p>
+<div class="callout note"><span class="label">Note</span><p>“NO CUMPLE” does not mean the measurement is useless: a real but broad or low-amplitude peak (A0 &lt; 2) fails clarity. Interpret it together with the curve and the diagnostics.</p></div>
+<div class="callout warn"><span class="label">Caution</span><p>The criteria were implemented from the SESAME guideline, with the ε and θ numerical tables transcribed, and have not yet been checked against a published reference case.</p></div>
+</section>
+<section id="e030"><h2>E.030 classification and memo</h2>
+<p>From Vs30, the seismic zone and the measured f0, the program classifies the soil profile, obtains the site parameters and checks the predominant period, following the tables of the E.030 code (2026 edition).</p>
+<h3>Soil profiles</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Profile</th><th>Name (Table No. 2)</th><th>Vs30 (Table No. 3)</th></tr></thead>
+  <tbody>
+    <tr><td>S0</td><td>Rock</td><td>Vs30 ≥ 800 m/s</td></tr>
+    <tr><td>S1</td><td>Very stiff soils</td><td>550 ≤ Vs30 &lt; 800 m/s</td></tr>
+    <tr><td>S2</td><td>Stiff soils</td><td>350 ≤ Vs30 &lt; 550 m/s</td></tr>
+    <tr><td>S3</td><td>Intermediate soils</td><td>200 ≤ Vs30 &lt; 350 m/s</td></tr>
+    <tr><td>S4</td><td>Soft soils</td><td>Vs30 &lt; 200 m/s</td></tr>
+    <tr><td>S5</td><td>Exceptional soils</td><td>Not classified by Vs30: requires a site-specific study (Art. 13)</td></tr>
+  </tbody>
+</table></div>
+<p>The lower limit of each interval is inclusive (Vs30 = 550 m/s is S1).</p>
+
+<h3>What it computes</h3>
+<ul>
+  <li><b>Z</b> — zone factor (Z1–Z4).</li>
+  <li><b>S</b> — soil factor; for profiles S2 and S3 it is <b>interpolated</b> linearly by Vs30 within its range. In zone Z4 with profile S4 the code requires a site-response analysis and there is no tabulated S.</li>
+  <li><b>Tp</b> and <b>TL</b> — spectrum periods (Table No. 5), also interpolated for S2 and S3.</li>
+  <li><b>Ts = 1/f0</b> and the check <b>Ts &lt; 0.65·Tp</b>.</li>
+  <li><b>Factor C</b> (Table No. 6), for reference only: it depends on the structure's period, which the program does not know.</li>
+</ul>
+
+<h3>Art. 14.8: reclassification</h3>
+<p>For building category <b>A or B in zone Z4</b> on <b>S1 to S4</b> soils, if Ts ≥ 0.65·Tp the next less favourable profile is taken, with the upper limit of Tp (or a site-specific study is made). In other cases the check is shown as additional information and the memo says so. If the profile is already S4, the next one (S5) has no parameters: a site-specific study is required.</p>
+
+<h3>The calculation memo (Word)</h3>
+<p><i>Generar memoria de cálculo (Word)…</i> creates a document with: zone factor, profile classification by Vs30, soil factor S, periods Tp and TL (with the step-by-step interpolation), the site's predominant period, the Ts &lt; 0.65·Tp check, the Art. 14.8 reclassification, the reference factor C and considerations and limitations. Every number is computed in the program; the document only presents it.</p>
+<div class="callout warn"><span class="label">Caution</span><p>The tables were transcribed from the provided text of the E.030 code (2026 edition). Check them against the current official text before critical use, and make sure the Vs30 you enter comes from an appropriate test (MASW, refraction, SPT) or state that it is theoretical.</p></div>
+</section>
+<section id="license"><h2>License and activation</h2>
+<p>The program ships with a <b>free 14-day trial</b>. After that it needs a <b>license</b> from JLVSpectra Labs co. tied to your computer, with an expiry date or perpetual. Everything works offline: the program neither sends nor receives anything.</p>
+<figure><img src="img/27_dialogo_licencia.png" alt="“Licencia y activación” dialog during the trial (demonstration computer). It opens by itself at start-up and from Ayuda → Licencia y activación…" loading="lazy"><figcaption>“Licencia y activación” dialog during the trial (demonstration computer). It opens by itself at start-up and from Ayuda → Licencia y activación…</figcaption></figure>
+<h3>How to activate a license</h3>
+<ol class="steps">
+  <li>Open <b>Ayuda → Licencia y activación…</b> and press <i>Copiar código</i>. This is the <b>machine code</b> (<code>XXXX-XXXX-XXXX-XXXX-XXXX</code>).</li>
+  <li>Send it to JLVSpectra Labs co. You will receive a license: a text starting with <code>PYHVSR1.</code> or a <code>.lic</code> file.</li>
+  <li>Paste the text in the box, or press <i>Cargar archivo .lic…</i>, then <i>Activar licencia</i>.</li>
+</ol>
+<figure><img src="img/27b_licencia_activa.png" alt="Active license with an expiry date: the dialog shows the customer, the identifier and the validity." loading="lazy"><figcaption>Active license with an expiry date: the dialog shows the customer, the identifier and the validity.</figcaption></figure>
+<h3>What you should know</h3>
+<ul>
+  <li><b>The machine code</b> — is an irreversible digest of your computer's Windows identifier: it contains no name or personal data. The license only works on the computer whose code was reported.</li>
+  <li><b>Renewing</b> — when a dated license is about to expire, the program warns you at start-up and in the title bar. Ask for the renewal with the same code and activate it the same way as the first time: it is installed over the previous one.</li>
+  <li><b>New computer or Windows reinstall</b> — the machine code changes: ask for a new license with the new code.</li>
+  <li><b>If it expires while the program is open</b> — the window is locked and a license is requested; your saved work is not lost. Save the project (<kbd>Ctrl</kbd>+<kbd>S</kbd>) before it expires.</li>
+  <li><b>System date</b> — if the computer's clock is behind the last time you used the program, it locks until you fix it.</li>
+  <li>Your results, reports and projects are yours: nothing is deleted when the license expires; the program simply stops opening until it is renewed.</li>
+</ul>
+<div class="callout note"><span class="label">Note</span><p>The full text of the license agreement is under Ayuda → Acerca de → Licencia.</p></div>
+</section>
+<section id="limits"><h2>Limitations and good practice</h2>
+<p>Knowing what the program does <i>not</i> guarantee is part of using it well.</p>
+
+<h3>Validation</h3>
+<ul>
+  <li>The computation was checked against Geopsy on <b>two records from the same sensor</b> (63 minutes, ST3 instrument) using exactly the parameters of Geopsy's .log: the curve matches across the whole band (correlation ≈ 0.999), with f0 within ~0.2–2 % and A0 within ~2–4 %. A constant bias of ≈ 5 % remains (our curve slightly lower) <b>with no identified cause</b>.</li>
+  <li>It has not yet been validated with other instruments or sites. For a new project, compare at least one record with another program.</li>
+</ul>
+
+<h3>About parameters and method</h3>
+<ul>
+  <li>A0 and the SESAME clarity verdict depend a lot on window length, smoothing and window rejection. With default parameters instead of Geopsy's, A0 came out almost double in one test.</li>
+  <li>The STA/LTA rejection averages the ratio within each window: with the same thresholds it does not necessarily discard the same windows as Geopsy.</li>
+  <li>Parzen smoothing approximates Geopsy's constant-width smoothing.</li>
+  <li>Diffuse-field mode is a simplified approximation (not the full Green's-function formulation) and “Directional energy” is a practical approximation of Geopsy's control.</li>
+  <li>A single measurement is a preliminary result: good practice recommends several measurements per point.</li>
+</ul>
+
+<h3>About the data</h3>
+<ul>
+  <li><b>Channel order (SEG-2):</b> a wrong order changes the result without warning. Always verify it.</li>
+  <li><b>Sensor response:</b> below the geophone's natural frequency the spectra fall and the H/V can show peaks that are not from the soil. State the sensor's natural frequency if you know it and check “Espectros por componente” and “Espectrogramas”.</li>
+  <li><b>Local sources:</b> machinery or regular traffic create narrow peaks that are not resonances. Spectrograms help you see them.</li>
+  <li>SAC and GCF are opened by ObsPy but have not been verified with real records in this program.</li>
+</ul>
+
+<h3>About other modules</h3>
+<ul>
+  <li><b>Basamento / Vs</b>: 1D SH-wave model, not Rayleigh waves; general literature coefficients. Indicative only.</li>
+  <li><b>Maps</b>: with few sites, interpolation is a visual aid.</li>
+  <li><b>E.030</b>: transcribed tables; check them against the current code. The program does not determine Vs30: you enter it.</li>
+  <li><b>Peak diagnosis</b>: indicative, not conclusive.</li>
+</ul>
+
+<h3>Good practice</h3>
+<ol class="steps">
+  <li>Verify each instrument's channel order.</li>
+  <li>Use the same parameter set throughout the project and record it.</li>
+  <li>Check the spectrograms and the per-component spectra before accepting a peak.</li>
+  <li>Compare at least one record with another program on new projects or with different instruments.</li>
+  <li>Present the results as support for the responsible professional's judgment.</li>
+</ol>
+</section>
+<section id="faq"><h2>FAQ</h2>
+<details><summary>I press “Aplicar banda” or “Elegir pico con clic” and see no change</summary>
+<p>The curve never changes: what changes is which peak is the dominant one (thick red line, peak table, SESAME and E.030). If the highest peak was already inside the band, or the click fell within ±12 % of the current peak, the result is the same. For click mode, first switch off the toolbar's zoom and pan. If “Reprocesa el sitio” appears, the site has no per-window curves (project saved with an earlier version): press <i>Procesar sitio activo</i>.</p></details>
+<details><summary>The activity log says “mapeo de canales NO VERIFICADO”</summary>
+<p>It is a warning, not an error: the Z/N/E order has not been confirmed. Open <i>Configurar mapeo de canales…</i>, confirm the order with the instrument datasheet and tick “He verificado”.</p></details>
+<details><summary>The SESAME verdict says “NO CUMPLE” but the curve looks fine</summary>
+<p>A real but broad or low-amplitude peak (A0 &lt; 2) does not meet clarity. Look at which criteria fail in the table (red), how long the record lasted (page 5) and whether the window length is enough for the f0 you are after.</p></details>
+<details><summary>A high-frequency peak or several small peaks appear</summary>
+<p>They are usually local or sensor noise. Check the spectrograms (a bright horizontal line is a fixed-frequency source) and limit the f0 search band if appropriate.</p></details>
+<details><summary>I paste a table in Excel and 1.587 shows up as 1587 or as a date</summary>
+<p>Your Excel uses a decimal comma. Right-click the table and choose “Copiar toda la tabla (coma decimal, para Excel en español)”.</p></details>
+<details><summary>Opening a project shows a warning that the data file cannot be found</summary>
+<p>The project stores the results but not the original signal. Put the file back in the folder where it was (the path in the warning) or re-import the record. Meanwhile you can view and export the saved results.</p></details>
+<details><summary>The Word memo is not generated</summary>
+<p>Check that you entered Vs30 (greater than 0) and the seismic zone, and look at the activity log: the error message shows the cause.</p></details>
+<details><summary>The manual does not open when I press F1</summary>
+<p>Open <code>docs/manual/index.html</code>, in the program's installation folder, manually with your browser. If it is missing, reinstall the program.</p></details>
+<details><summary>The program is slow with long records</summary>
+<p>Processing runs in the background and the window stays responsive. Records over an hour at a high sampling rate take longer; the azimuthal analysis and the per-component spectra go through all the windows.</p></details>
+</section>
+<section id="about"><h2>License, credits and version</h2>
+<p><b>pyhvsr-suite</b> version 0.1.0<br>
+Developed by <b>JLVSpectra Labs co.</b></p>
+
+<h3>License</h3>
+<p>© 2026 JLVSpectra Labs co. All rights reserved. Use of the program is governed by the end-user license agreement (file <code>LICENSE.txt</code>, also shown under Ayuda → Acerca de → Licencia). In short: it is licensed, not sold; you may use it, including for professional and commercial purposes, and the reports you produce are yours; you may not copy it, redistribute it or reverse engineer it; it is provided without warranty and the user is responsible for verifying the results.</p>
+
+<h3>Third-party components</h3>
+<p>The program uses open-source libraries (ObsPy, NumPy, SciPy, Matplotlib, ReportLab, openpyxl, pyproj and others) under their own licenses; they are listed in <code>THIRD_PARTY_NOTICES.txt</code>. The names Geopsy, SESAME, SEG-2, SAF, MiniSEED, Tromino and E.030 belong to their owners and are used only to indicate format compatibility or normative reference; pyhvsr-suite includes no Geopsy code and is not affiliated with its authors.</p>
+
+<h3>References</h3>
+<ul>
+  <li>Nakamura, Y. (1989). A method for dynamic characteristics estimation of subsurface using microtremor on the ground surface. <i>QR of RTRI</i>, 30(1).</li>
+  <li>SESAME (2004). <i>Guidelines for the implementation of the H/V spectral ratio technique on ambient vibrations.</i></li>
+  <li>Konno, K. &amp; Ohmachi, T. (1998). Ground-motion characteristics estimated from spectral ratio between horizontal and vertical components of microtremor. <i>BSSA</i>, 88(1).</li>
+  <li>Cox, B. R., Cheng, T., Vantassel, J. P. &amp; Manuel, L. (2020). A statistical representation and frequency-domain window-rejection algorithm for single-station HVSR measurements. <i>Geophysical Journal International</i>, 221(3).</li>
+  <li>Ibs-von Seht, M. &amp; Wohlenberg, J. (1999). Microtremor measurements used to map thickness of soft sediments. <i>BSSA</i>, 89(1).</li>
+  <li>Technical Code E.030 “Seismic-Resistant Design” (2026 edition).</li>
+</ul>
+</section>
+<footer class="page-end">pyhvsr-suite · JLVSpectra Labs co. · Results are technical support: verify them before using them in engineering decisions. · v0.1.0</footer>
+</main>
+</div>
+<script src="manual.js"></script>
+</body>
+</html>

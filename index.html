@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pyhvsr-suite — Manual / User manual</title>
+<link rel="icon" href="img/logo.png">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { display: grid; min-height: 100vh; place-items: center; padding: 24px; }
+  .choose { text-align: center; max-width: 520px; }
+  .choose img { width: 120px; height: auto; }
+  .choose h1 { margin: .3em 0 .1em; }
+  .choose .meta { margin-bottom: 1.6em; }
+  .choose .buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .choose a.big {
+    min-width: 190px; padding: 14px 22px; border-radius: 8px; text-decoration: none; font-weight: 700;
+    background: var(--accent); color: var(--accent-ink);
+  }
+  .choose a.big.alt { background: var(--surface); color: var(--text); border: 1px solid var(--line); }
+</style>
+</head>
+<body>
+<div class="choose">
+  <img src="img/logo.png" alt="pyhvsr-suite">
+  <h1>pyhvsr-suite</h1>
+  <p class="meta">v0.1.0 · JLVSpectra Labs co.</p>
+  <div class="buttons">
+    <a class="big" href="manual_es.html" data-lang-switch="es">Manual de usuario (español)</a>
+    <a class="big alt" href="manual_en.html" data-lang-switch="en">User manual (English)</a>
+  </div>
+</div>
+<script src="manual.js"></script>
+<script>
+  /* Abre directamente el idioma recordado o el del navegador; si no hay JavaScript, se ven los dos botones. */
+  (function () {
+    var lang = null;
+    try { lang = localStorage.getItem("hvsr-manual-lang"); } catch (e) {}
+    if (lang !== "es" && lang !== "en") {
+      lang = (navigator.language || "es").toLowerCase().indexOf("es") === 0 ? "es" : "en";
+    }
+    location.replace("manual_" + lang + ".html");
+  })();
+</script>
+</body>
+</html>
