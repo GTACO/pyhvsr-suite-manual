@@ -60,7 +60,7 @@
   <div class="facts">
     <div class="fact"><b>f0 · T0 · A0</b><span>peak frequency, period and amplitude</span></div>
     <div class="fact"><b>SESAME 2004</b><span>9 reliability and clarity criteria</span></div>
-    <div class="fact"><b>E.030</b><span>site classification and Word memo</span></div>
+    <div class="fact"><b>E.030</b><span>site classification and memo in Word, PDF and LaTeX</span></div>
     <div class="fact"><b>Works offline</b><span>everything is computed on your computer</span></div>
   </div>
 </div>
@@ -76,7 +76,7 @@
   <li>Multi-site maps (f0, T0, amplitude) clipped to a study-area polygon.</li>
   <li>Indicative bedrock-depth and Vs-profile estimation.</li>
   <li>Export to Geopsy format (.hv), Excel and CSV; comparison with a Geopsy curve.</li>
-  <li>PDF reports (classic, detailed and consolidated) and an E.030 calculation memo in Word.</li>
+  <li>PDF reports (classic, detailed and consolidated) and an E.030 calculation memo in Word, PDF and LaTeX.</li>
 </ul>
 
 <div class="callout warn"><span class="label">Caution</span><p>The results are technical support and depend on the data and on the parameters you choose. They do not replace the judgment of a qualified professional. Read the “Limitations” section before using them in engineering decisions.</p></div>
@@ -95,7 +95,7 @@
   <li><b>Validate the peak.</b>
       If the automatic peak is not the one you want, limit the band or click on the curve. Check “6. Espectros por componente” to see where it comes from.</li>
   <li><b>Add the E.030 classification.</b>
-      On the same page enter Vs30, seismic zone and building category and generate the calculation memo (Word).</li>
+      On the same page enter Vs30, seismic zone and building category and generate the calculation memo (Word, PDF or LaTeX).</li>
   <li><b>Export.</b>
       <i>Exportar resultados</i> (.hv / Excel / CSV), <i>Exportar gráfico</i> and <i>Generar reporte PDF…</i>.</li>
   <li><b>Save the project.</b>
@@ -232,7 +232,7 @@
 <p><i>Superponer .hv de Geopsy…</i> draws in orange the curve of a Geopsy .hv file and shows the differences in f0, A0 and curve shape. <i>Quitar superposición</i> removes it.</p>
 
 <h3>E.030 classification</h3>
-<p>Enter Vs30, its source, the seismic zone (Z1–Z4) and the building category (A–D) and press <i>Generar memoria de cálculo (Word)…</i>. Details in “E.030 classification and memo”.</p>
+<p>Enter Vs30, its source, the seismic zone (Z1–Z4) and the building category (A–D) and press one of the three memo buttons: <i>Generar memoria de cálculo (Word)…</i>, <i>(PDF)…</i> or <i>(LaTeX)…</i>. Details in “E.030 classification and memo”.</p>
 
 <h3>Top buttons</h3>
 <ul>
@@ -425,8 +425,16 @@
 <h3>Art. 14.8: reclassification</h3>
 <p>For building category <b>A or B in zone Z4</b> on <b>S1 to S4</b> soils, if Ts ≥ 0.65·Tp the next less favourable profile is taken, with the upper limit of Tp (or a site-specific study is made). In other cases the check is shown as additional information and the memo says so. If the profile is already S4, the next one (S5) has no parameters: a site-specific study is required.</p>
 
-<h3>The calculation memo (Word)</h3>
-<p><i>Generar memoria de cálculo (Word)…</i> creates a document with: zone factor, profile classification by Vs30, soil factor S, periods Tp and TL (with the step-by-step interpolation), the site's predominant period, the Ts &lt; 0.65·Tp check, the Art. 14.8 reclassification, the reference factor C and considerations and limitations. Every number is computed in the program; the document only presents it.</p>
+<h3>The calculation memo: Word, PDF and LaTeX</h3>
+<p>Any of the three buttons creates a document with: zone factor, profile classification by Vs30, soil factor S, periods Tp and TL (with the step-by-step interpolation), the site's predominant period, the Ts &lt; 0.65·Tp check, the Art. 14.8 reclassification, the reference factor C and considerations and limitations.</p>
+<div class="table-wrap"><table>
+<tr><th>Button</th><th>What you get</th><th>When to use it</th></tr>
+<tr><td><i>Generar memoria de cálculo (Word)…</i></td><td>A <code>.docx</code> file.</td><td>To edit the text in Word before delivering it.</td></tr>
+<tr><td><i>Generar memoria de cálculo (PDF)…</i></td><td>A LaTeX-formatted PDF, ready to deliver.</td><td>The most direct option: you do not need LaTeX installed or an internet connection.</td></tr>
+<tr><td><i>Generar memoria de cálculo (LaTeX)…</i></td><td>The editable <code>.tex</code> file and its PDF.</td><td>To include the memo in a thesis or paper, or to customise it in LaTeX.</td></tr>
+</table></div>
+<p>All three give the same numbers, because they come from the same calculation. The PDF is compiled with a LaTeX compiler that is bundled with the program; the first time it prepares a copy of its packages in your user folder (about 40 MB, a couple of seconds) and afterwards it compiles in a few seconds. If you already have MiKTeX or TeX Live installed, the LaTeX button uses it.</p>
+<p>Every number is computed in the program; the document only presents it.</p>
 <div class="callout warn"><span class="label">Caution</span><p>The tables were transcribed from the provided text of the E.030 code (2026 edition). Check them against the current official text before critical use, and make sure the Vs30 you enter comes from an appropriate test (MASW, refraction, SPT) or state that it is theoretical.</p></div>
 </section>
 <section id="license"><h2>License and activation</h2>
@@ -506,8 +514,8 @@
 <p>Your Excel uses a decimal comma. Right-click the table and choose “Copiar toda la tabla (coma decimal, para Excel en español)”.</p></details>
 <details><summary>Opening a project shows a warning that the data file cannot be found</summary>
 <p>The project stores the results but not the original signal. Put the file back in the folder where it was (the path in the warning) or re-import the record. Meanwhile you can view and export the saved results.</p></details>
-<details><summary>The Word memo is not generated</summary>
-<p>Check that you entered Vs30 (greater than 0) and the seismic zone, and look at the activity log: the error message shows the cause.</p></details>
+<details><summary>The memo (Word, PDF or LaTeX) is not generated</summary>
+<p>Check that you entered Vs30 (greater than 0) and the seismic zone, and look at the activity log: the error message shows the cause. If only the PDF fails, generate the memo in Word, which does not depend on the compiler.</p></details>
 <details><summary>The manual does not open when I press F1</summary>
 <p>Open <code>docs/manual/index.html</code>, in the program's installation folder, manually with your browser. If it is missing, reinstall the program.</p></details>
 <details><summary>The program is slow with long records</summary>

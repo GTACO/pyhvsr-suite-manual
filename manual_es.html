@@ -60,7 +60,7 @@
   <div class="facts">
     <div class="fact"><b>f0 · T0 · A0</b><span>frecuencia, período y amplitud del pico</span></div>
     <div class="fact"><b>SESAME 2004</b><span>9 criterios de fiabilidad y claridad</span></div>
-    <div class="fact"><b>E.030</b><span>clasificación de sitio y memoria en Word</span></div>
+    <div class="fact"><b>E.030</b><span>clasificación de sitio y memoria en Word, PDF y LaTeX</span></div>
     <div class="fact"><b>Sin internet</b><span>todo se calcula en tu equipo</span></div>
   </div>
 </div>
@@ -76,7 +76,7 @@
   <li>Mapas multi-sitio (f0, T0, amplitud) con recorte a un polígono de estudio.</li>
   <li>Estimación orientativa de profundidad de basamento y perfil de Vs.</li>
   <li>Exportación a formato Geopsy (.hv), Excel y CSV; comparación con una curva de Geopsy.</li>
-  <li>Informes PDF (clásico, detallado y consolidado) y memoria de cálculo E.030 en Word.</li>
+  <li>Informes PDF (clásico, detallado y consolidado) y memoria de cálculo E.030 en Word, en PDF y en LaTeX.</li>
 </ul>
 
 <div class="callout warn"><span class="label">Cuidado</span><p>Los resultados son un apoyo técnico y dependen de los datos y de los parámetros elegidos. No sustituyen el criterio de un profesional calificado. Lee la sección «Limitaciones» antes de usarlos en decisiones de ingeniería.</p></div>
@@ -95,7 +95,7 @@
   <li><b>Valida el pico.</b>
       Si el pico automático no es el que te interesa, acota la banda o haz clic sobre la curva. Consulta «6. Espectros por componente» para saber de dónde viene.</li>
   <li><b>Añade la clasificación E.030.</b>
-      En la misma página ingresa Vs30, zona sísmica y categoría de edificación y genera la memoria de cálculo (Word).</li>
+      En la misma página ingresa Vs30, zona sísmica y categoría de edificación y genera la memoria de cálculo (Word, PDF o LaTeX).</li>
   <li><b>Exporta.</b>
       <i>Exportar resultados</i> (.hv / Excel / CSV), <i>Exportar gráfico</i> y <i>Generar reporte PDF…</i>.</li>
   <li><b>Guarda el proyecto.</b>
@@ -232,7 +232,7 @@
 <p><i>Superponer .hv de Geopsy…</i> dibuja en naranja la curva de un archivo .hv de Geopsy y muestra las diferencias de f0, A0 y de forma de la curva. <i>Quitar superposición</i> la retira.</p>
 
 <h3>Clasificación E.030</h3>
-<p>Ingresa Vs30, su fuente, la zona sísmica (Z1–Z4) y la categoría de edificación (A–D) y pulsa <i>Generar memoria de cálculo (Word)…</i>. Detalles en «Clasificación E.030 y memoria».</p>
+<p>Ingresa Vs30, su fuente, la zona sísmica (Z1–Z4) y la categoría de edificación (A–D) y pulsa uno de los tres botones de memoria: <i>Generar memoria de cálculo (Word)…</i>, <i>(PDF)…</i> o <i>(LaTeX)…</i>. Detalles en «Clasificación E.030 y memoria».</p>
 
 <h3>Botones de la parte superior</h3>
 <ul>
@@ -425,8 +425,16 @@
 <h3>Art. 14.8: reclasificación</h3>
 <p>Para edificaciones de categoría <b>A o B en zona Z4</b> sobre suelos <b>S1 a S4</b>, si Ts ≥ 0.65·Tp se toma el perfil siguiente más desfavorable, con el límite superior de Tp (o se hace un estudio de sitio específico). En otros casos la verificación se muestra como información adicional y la memoria lo indica. Si el perfil ya es S4, el siguiente (S5) no tiene parámetros: corresponde un estudio de sitio.</p>
 
-<h3>La memoria de cálculo (Word)</h3>
-<p><i>Generar memoria de cálculo (Word)…</i> crea un documento con: factor de zona, clasificación del perfil por Vs30, factor de suelo S, períodos Tp y TL (con la interpolación paso a paso), período predominante del sitio, verificación Ts &lt; 0.65·Tp, reclasificación del Art. 14.8, factor C de referencia y consideraciones y limitaciones. Cada número se calcula en el programa; el documento solo lo presenta.</p>
+<h3>La memoria de cálculo: Word, PDF y LaTeX</h3>
+<p>Cualquiera de los tres botones crea un documento con: factor de zona, clasificación del perfil por Vs30, factor de suelo S, períodos Tp y TL (con la interpolación paso a paso), período predominante del sitio, verificación Ts &lt; 0.65·Tp, reclasificación del Art. 14.8, factor C de referencia y consideraciones y limitaciones.</p>
+<div class="table-wrap"><table>
+<tr><th>Botón</th><th>Qué entrega</th><th>Cuándo usarlo</th></tr>
+<tr><td><i>Generar memoria de cálculo (Word)…</i></td><td>Un archivo <code>.docx</code>.</td><td>Para editar el texto en Word antes de entregarlo.</td></tr>
+<tr><td><i>Generar memoria de cálculo (PDF)…</i></td><td>Un PDF con formato LaTeX, listo para entregar.</td><td>La opción más directa: no necesitas tener LaTeX instalado ni conexión a internet.</td></tr>
+<tr><td><i>Generar memoria de cálculo (LaTeX)…</i></td><td>El archivo <code>.tex</code> editable y su PDF.</td><td>Para incluir la memoria en una tesis o publicación, o personalizarla en LaTeX.</td></tr>
+</table></div>
+<p>Los tres entregan los mismos números, porque salen del mismo cálculo. El PDF se compila con un compilador LaTeX que viene incluido en el programa; la primera vez prepara una copia de sus paquetes en tu carpeta de usuario (unos 40 MB, un par de segundos) y después compila en pocos segundos. Si ya tienes MiKTeX o TeX Live instalado, el botón de LaTeX lo usa.</p>
+<p>Cada número se calcula en el programa; el documento solo lo presenta.</p>
 <div class="callout warn"><span class="label">Cuidado</span><p>Las tablas se transcribieron del texto de la norma E.030 (edición 2026) proporcionado. Cótejalas con el texto oficial vigente antes de un uso crítico, y verifica que el Vs30 que ingresas provenga de un ensayo apropiado (MASW, refracción, SPT) o declara que es teórico.</p></div>
 </section>
 <section id="license"><h2>Licencia y activación</h2>
@@ -506,8 +514,8 @@
 <p>Tu Excel usa coma decimal. Haz clic derecho en la tabla y elige «Copiar toda la tabla (coma decimal, para Excel en español)».</p></details>
 <details><summary>Al abrir un proyecto sale un aviso de que no se encuentra el archivo de datos</summary>
 <p>El proyecto guarda los resultados pero no la señal original. Devuelve el archivo a la carpeta donde estaba (la ruta que indica el aviso) o reimporta el registro. Mientras tanto puedes ver y exportar los resultados guardados.</p></details>
-<details><summary>La memoria de Word no se genera</summary>
-<p>Comprueba que hayas ingresado Vs30 (mayor que 0) y la zona sísmica, y revisa el registro de actividad: el mensaje de error indica la causa.</p></details>
+<details><summary>La memoria (Word, PDF o LaTeX) no se genera</summary>
+<p>Comprueba que hayas ingresado Vs30 (mayor que 0) y la zona sísmica, y revisa el registro de actividad: el mensaje de error indica la causa. Si falla solo el PDF, genera la memoria en Word, que no depende del compilador.</p></details>
 <details><summary>El manual no se abre al pulsar F1</summary>
 <p>Abre manualmente <code>docs/manual/index.html</code>, en la carpeta de instalación del programa, con tu navegador. Si falta, reinstala el programa.</p></details>
 <details><summary>El programa es lento con registros largos</summary>
