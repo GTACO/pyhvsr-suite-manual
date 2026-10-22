@@ -342,8 +342,8 @@
 <p><i>Generar reporte PDF…</i> abre el diálogo de plantilla (empresa, proyecto, logotipo opcional, pie de página y formato).</p>
 <figure class="narrow"><img src="img/21_dialogo_plantilla_reporte.png" alt="Diálogo de plantilla del reporte." loading="lazy"><figcaption>Diálogo de plantilla del reporte.</figcaption></figure>
 <ul>
-  <li><b>Clásico</b> — una página con el registro de campo, la curva con su pico, el cuadro de resultados (Vs30, clasificación, f0, T0, A0) y la verificación SESAME, más la página de la evolución temporal y el anexo E.030.</li>
-  <li><b>Detallado</b> — secciones numeradas: datos del sitio, parámetros, curva, picos, criterios SESAME, E.030 y evolución temporal.</li>
+  <li><b>Clásico</b> — una página con el registro de campo, la curva con su pico, el cuadro de resultados (Vs30, clasificación, f0, T0, A0) y la verificación SESAME, más una segunda hoja con la tabla «Verificaciones SESAME», la página de la evolución temporal y el anexo E.030.</li>
+  <li><b>Detallado</b> — secciones numeradas: datos del sitio, parámetros, curva, picos, criterios SESAME (tabla detallada y tabla «Verificaciones SESAME»), E.030 y evolución temporal.</li>
   <li><b>Consolidado</b> — desde el menú Proyecto → <i>Generar reporte consolidado (PDF)…</i>: un solo documento con todos los sitios procesados.</li>
 </ul>
 <figure><img src="img/30_informe_clasico.png" alt="Informe clásico de una página (datos de ejemplo)." loading="lazy"><figcaption>Informe clásico de una página (datos de ejemplo).</figcaption></figure>
@@ -395,6 +395,10 @@
 </table></div>
 <p>El veredicto global es <b>CUMPLE</b> si se cumplen los 3 de fiabilidad y al menos 5 de los 6 de claridad. ε(f0) y θ(f0) son umbrales que dependen del rango de f0, tomados de la guía SESAME.</p>
 <div class="callout note"><span class="label">Nota</span><p>«NO CUMPLE» no significa que la medición sea inútil: un pico real pero ancho o de poca amplitud (A0 &lt; 2) falla la claridad. Interprétalo junto con la curva y con los diagnósticos.</p></div>
+<h3>La tabla «Verificaciones SESAME» de los informes</h3>
+<p>Además de la tabla de criterios con su detalle, el informe detallado y el clásico incluyen la tabla <b>Verificaciones SESAME</b>, escrita con la notación de la guía (2004): una fila por condición, con su fórmula, y el resultado <i>Ok</i> o <b>No</b>. Las dos redacciones del criterio de σ<sub>A</sub>(f) comparten un único resultado, porque solo una se aplica según f0 sea mayor o menor que 0.5 Hz.</p>
+<figure><img src="img/34_tabla_verificaciones_sesame.png" alt="Tabla «Verificaciones SESAME» del informe (datos de ejemplo)." loading="lazy"><figcaption>Tabla «Verificaciones SESAME» del informe (datos de ejemplo).</figcaption></figure>
+<div class="callout note"><span class="label">Nota</span><p>Dos criterios se escriben en esta tabla tal como los redacta la guía: σ<sub>A</sub>(f) se mide en la banda 0.5·f0 &lt; f &lt; 2·f0 (la tabla de criterios del programa usa [f0/4, 4f0]) y la posición del pico de las curvas media ±σ debe quedar dentro de f0 ± 5 % (la tabla de criterios usa la tolerancia ε(f0)). Por eso en algunos sitios ambas tablas pueden diferir en esos dos criterios; una nota al pie del informe lo indica. El veredicto global del programa sigue calculándose con la tabla de criterios.</p></div>
 <div class="callout warn"><span class="label">Cuidado</span><p>Los criterios se implementaron según la guía SESAME, con las tablas numéricas de ε y θ transcritas, y aún no se han contrastado con un caso de referencia publicado.</p></div>
 </section>
 <section id="e030"><h2>Clasificación E.030 y memoria</h2>

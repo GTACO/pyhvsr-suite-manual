@@ -342,8 +342,8 @@
 <p><i>Generar reporte PDF…</i> opens the template dialog (company, project, optional logo, footer and format).</p>
 <figure class="narrow"><img src="img/21_dialogo_plantilla_reporte.png" alt="Report template dialog." loading="lazy"><figcaption>Report template dialog.</figcaption></figure>
 <ul>
-  <li><b>Classic</b> — one page with the field record, the curve with its peak, the results box (Vs30, classification, f0, T0, A0) and the SESAME check, plus the temporal-evolution page and the E.030 annex.</li>
-  <li><b>Detailed</b> — numbered sections: site data, parameters, curve, peaks, SESAME criteria, E.030 and temporal evolution.</li>
+  <li><b>Classic</b> — one page with the field record, the curve with its peak, the results box (Vs30, classification, f0, T0, A0) and the SESAME check, plus a second sheet with the “Verificaciones SESAME” table, the temporal-evolution page and the E.030 annex.</li>
+  <li><b>Detailed</b> — numbered sections: site data, parameters, curve, peaks, SESAME criteria (detailed table and the “Verificaciones SESAME” table), E.030 and temporal evolution.</li>
   <li><b>Consolidated</b> — from the Proyecto menu → <i>Generar reporte consolidado (PDF)…</i>: one document with all the processed sites.</li>
 </ul>
 <figure><img src="img/30_informe_clasico.png" alt="One-page classic report (sample data)." loading="lazy"><figcaption>One-page classic report (sample data).</figcaption></figure>
@@ -395,6 +395,10 @@
 </table></div>
 <p>The overall verdict is <b>CUMPLE</b> (met) if all 3 reliability criteria and at least 5 of the 6 clarity criteria are met. ε(f0) and θ(f0) are thresholds that depend on the f0 range, taken from the SESAME guideline.</p>
 <div class="callout note"><span class="label">Note</span><p>“NO CUMPLE” does not mean the measurement is useless: a real but broad or low-amplitude peak (A0 &lt; 2) fails clarity. Interpret it together with the curve and the diagnostics.</p></div>
+<h3>The “Verificaciones SESAME” table in the reports</h3>
+<p>In addition to the criteria table with its detail, the detailed and the classic reports include the <b>Verificaciones SESAME</b> table, written with the notation of the guideline (2004): one row per condition, with its formula, and the result <i>Ok</i> or <b>No</b>. The two wordings of the σ<sub>A</sub>(f) criterion share a single result, because only one applies depending on whether f0 is above or below 0.5 Hz.</p>
+<figure><img src="img/34_tabla_verificaciones_sesame.png" alt="“Verificaciones SESAME” table of the report (sample data)." loading="lazy"><figcaption>“Verificaciones SESAME” table of the report (sample data).</figcaption></figure>
+<div class="callout note"><span class="label">Note</span><p>Two criteria are written in this table exactly as the guideline words them: σ<sub>A</sub>(f) is measured in the band 0.5·f0 &lt; f &lt; 2·f0 (the program's criteria table uses [f0/4, 4f0]) and the position of the peak of the mean ±σ curves must lie within f0 ± 5 % (the criteria table uses the tolerance ε(f0)). For that reason the two tables may differ in those two criteria at some sites; a footnote in the report says so. The program's overall verdict is still computed with the criteria table.</p></div>
 <div class="callout warn"><span class="label">Caution</span><p>The criteria were implemented from the SESAME guideline, with the ε and θ numerical tables transcribed, and have not yet been checked against a published reference case.</p></div>
 </section>
 <section id="e030"><h2>E.030 classification and memo</h2>
