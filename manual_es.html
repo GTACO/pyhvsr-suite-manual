@@ -87,7 +87,7 @@
   <li><b>Agrega el registro.</b>
       En «1. Proyecto / Catálogo» pulsa <i>Agregar archivo(s)…</i> (o arrastra el archivo). Para SEG-2 abre <i>Configurar mapeo de canales…</i>, indica cuál canal es Z, N y E y marca «He verificado que este orden es correcto».</li>
   <li><b>Revisa la señal y las ventanas.</b>
-      En «2. Señal / Ventanas» pulsa <i>Generar ventanas</i>. Las verdes se usan; las rojas se descartan. Puedes aplicar el rechazo automático o hacer clic en una ventana para aceptarla o rechazarla.</li>
+      En «2. Señal / Ventanas» pulsa <i>Generar ventanas</i>. Las verdes se usan; las rojas se descartan. Puedes aplicar el rechazo automático, hacer clic en una ventana para aceptarla o rechazarla, o arrastrar el ratón sobre la señal para rechazar varias.</li>
   <li><b>Elige los parámetros.</b>
       En «3. Parámetros» los valores por defecto sirven para empezar. Lo más influyente es el largo de ventana, el suavizado y el rechazo de ventanas.</li>
   <li><b>Procesa.</b>
@@ -155,6 +155,14 @@
   <li><b>Guardar proyecto / Guardar como… / Abrir proyecto…</b> — ver «Proyectos, formatos y exportaciones».</li>
   <li><b>Procesar todos los sitios del proyecto</b> — procesa en lote con los parámetros de cada sitio. Si hay sitios con el mapeo sin verificar, pide confirmación.</li>
 </ul>
+<h3>Varios sitios: procesar en lote y reajustar uno por uno</h3>
+<ol>
+  <li>Agrega todos los archivos de una vez (<i>Agregar archivo(s)…</i> o arrastrándolos) y confirma el mapeo de canales de cada sitio.</li>
+  <li>En «3. Parámetros» configura un sitio y pulsa <i>Aplicar esta configuración a todos los sitios del proyecto</i>.</li>
+  <li>Pulsa <i>Procesar todos los sitios del proyecto</i>. Cada sitio se procesa con sus propios parámetros y <b>conserva las ventanas que rechazaste a mano</b>.</li>
+  <li>Después puedes <b>reajustar cualquier sitio por separado</b>: selecciónalo, revisa sus ventanas en «2. Señal / Ventanas», cambia sus parámetros en «3» y pulsa <i>Procesar sitio activo</i> en «4. Resultados H/V». Los demás sitios no cambian.</li>
+</ol>
+<div class="callout note"><span class="label">Nota</span><p>Si cambias la longitud o el traslape de las ventanas de un sitio, sus ventanas se regeneran al procesar y se pierde lo que habías rechazado a mano en ese sitio (los tramos ya no coinciden).</p></div>
 </section>
 <section id="p2"><h2>2. Señal / Ventanas</h2>
 <p>Muestra las tres trazas (Z, N, E) y las ventanas de análisis sobre ellas. Sirve para decidir qué partes del registro se usan.</p>
@@ -165,7 +173,10 @@
   <li><b>Aplicar rechazo por outlier de amplitud</b> — descarta ventanas cuya amplitud se aleja mucho de las demás.</li>
   <li><b>Restaurar todas (válidas)</b> — vuelve a marcar todas como válidas.</li>
   <li><b>Clic sobre una ventana</b> la acepta o la rechaza a mano.</li>
+  <li><b>Arrastrar el ratón sobre la señal</b> (sobre cualquiera de las tres trazas) marca un tramo: se rechazan todas las ventanas que toca. Con <i>Al arrastrar sobre la señal: Restaurar ventanas</i> el mismo gesto las restaura.</li>
+  <li><b>Deshacer</b> — vuelve atrás el último cambio (clic, arrastre o «Restaurar todas»), hasta 50 pasos por sitio.</li>
 </ul>
+<div class="callout note"><span class="label">Nota</span><p>Mientras la lupa o el desplazamiento de la barra de herramientas estén activos, arrastrar no rechaza ventanas. Lo rechazado a mano se conserva al procesar; el rechazo automático (STA/LTA, amplitud) se vuelve a calcular con los parámetros vigentes.</p></div>
 <div class="callout note"><span class="label">Nota</span><p>Las muestras malas (valores no finitos, tramos planos, saturación) y el criterio de Cox et al. (2020) se aplican solos al procesar, según lo que actives en la página 3; no necesitan un botón aquí.</p></div>
 <div class="callout tip"><span class="label">Consejo</span><p>Antes de rechazar a ciegas mira el espectrograma (página 10): un transitorio aparece como una franja vertical y una fuente de frecuencia fija como una línea horizontal.</p></div>
 </section>
@@ -399,6 +410,10 @@
 <p>Además de la tabla de criterios con su detalle, el informe detallado y el clásico incluyen la tabla <b>Verificaciones SESAME</b>, escrita con la notación de la guía (2004): una fila por condición, con su fórmula, y el resultado <i>Ok</i> o <b>No</b>. Las dos redacciones del criterio de σ<sub>A</sub>(f) comparten un único resultado, porque solo una se aplica según f0 sea mayor o menor que 0.5 Hz.</p>
 <figure><img src="img/34_tabla_verificaciones_sesame.png" alt="Tabla «Verificaciones SESAME» del informe (datos de ejemplo)." loading="lazy"><figcaption>Tabla «Verificaciones SESAME» del informe (datos de ejemplo).</figcaption></figure>
 <div class="callout note"><span class="label">Nota</span><p>Dos criterios se escriben en esta tabla tal como los redacta la guía: σ<sub>A</sub>(f) se mide en la banda 0.5·f0 &lt; f &lt; 2·f0 (la tabla de criterios del programa usa [f0/4, 4f0]) y la posición del pico de las curvas media ±σ debe quedar dentro de f0 ± 5 % (la tabla de criterios usa la tolerancia ε(f0)). Por eso en algunos sitios ambas tablas pueden diferir en esos dos criterios; una nota al pie del informe lo indica. El veredicto global del programa sigue calculándose con la tabla de criterios.</p></div>
+<h3>Ventanas rechazadas por criterio</h3>
+<p>En la sección de parámetros, el informe detallado (y cada sitio del informe consolidado) agrega una tabla con las ventanas totales, las usadas en el H/V y las rechazadas, con el desglose por criterio: rechazo manual, muestras malas, STA/LTA, outlier de amplitud y Cox et al. (2020). La hoja <i>Resumen</i> del Excel trae las mismas filas.</p>
+<figure><img src="img/35_tabla_ventanas_rechazadas.png" alt="Tabla «Ventanas rechazadas por criterio» del informe (San Cristóbal, con STA/LTA y outlier de amplitud activados)." loading="lazy"><figcaption>Tabla «Ventanas rechazadas por criterio» del informe (San Cristóbal, con STA/LTA y outlier de amplitud activados).</figcaption></figure>
+<div class="callout note"><span class="label">Nota</span><p>Cada ventana rechazada se cuenta en el <b>primer</b> criterio que la descartó, en el orden manual, muestras malas, STA/LTA, outlier de amplitud y Cox. STA/LTA usa umbrales de razón fijos; el outlier de amplitud se mide frente a las demás ventanas del mismo sitio. Cox et al. (2020) compara la frecuencia del pico de cada ventana con la media ± 2σ de ln f<sub>pico</sub> de las ventanas que quedan y repite hasta que no rechaza más: descarta las ventanas cuyo pico no es consistente con el del sitio. Cada sitio se evalúa con sus propios datos.</p></div>
 <div class="callout warn"><span class="label">Cuidado</span><p>Los criterios se implementaron según la guía SESAME, con las tablas numéricas de ε y θ transcritas, y aún no se han contrastado con un caso de referencia publicado.</p></div>
 </section>
 <section id="e030"><h2>Clasificación E.030 y memoria</h2>
@@ -492,7 +507,7 @@
 <ul>
   <li><b>Basamento / Vs</b>: modelo de ondas SH 1D, no de ondas Rayleigh; coeficientes generales de la literatura. Solo orientativo.</li>
   <li><b>Mapas</b>: con pocos sitios, la interpolación es una ayuda visual.</li>
-  <li><b>E.030</b>: tablas transcritas; verifícalas con la norma vigente. El programa no determina el Vs30: lo ingresas tú.</li>
+  <li><b>E.030</b>: las tablas se contrastaron con el texto de la norma E.030-2026 (59 comprobaciones, sin diferencias); verifícalas con la norma vigente. El programa no determina el Vs30: lo ingresas tú. La memoria cubre una medición: el Art. 15.4 exige al menos 3 mediciones de 30 minutos o más, interpretadas con SESAME, y elegir la que dé la clasificación más conservadora.</li>
   <li><b>Diagnóstico del pico</b>: indicativo, no concluyente.</li>
 </ul>
 
